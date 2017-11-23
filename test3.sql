@@ -1,0 +1,1 @@
+select name, family from Organization where name = family
