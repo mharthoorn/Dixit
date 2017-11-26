@@ -11,8 +11,10 @@ namespace SpanTest
     {
         public static void DumpAst(Node root)
         {
-            Console.WriteLine("AST: ");
+            Console.WriteLine();
+            Console.WriteLine("Dump of expression tree: ");
             root.Visit(print, 0, n => n+1);
+            Console.WriteLine();
 
             void print(Node node, int depth) => Console.WriteLine($"{new string(' ', depth*2)}- {node}");
         }
@@ -26,30 +28,56 @@ namespace SpanTest
             }
         }
 
-        public static void Test(string text)
+        public static void Compile(string text)
         {
+            Console.WriteLine("Query:\n" + text);
+            Console.WriteLine();
+
             var compiler = new SqlCompiler();
             (var ast, var success) = compiler.Compile(text);
             if (success)
             {
                 Console.WriteLine("Compilation succeeded.");
+                DumpAst(ast);
+
+                var query = compiler.GetQuery(ast);
+                Console.WriteLine($"Query.Fields: {string.Join(", ", query.Fields)}");
+                Console.WriteLine($"Query.Resource: {string.Join(", ", query.Resource)}");
+                Console.WriteLine($"Where: ");
+                foreach(var pair in query.Where)
+                {
+                    Console.WriteLine($" - {pair.Key} = {pair.Value}");
+                }
+                
             }
             else 
             {
                 Console.WriteLine("Compilation failed.");
                 DumpErrors(ast);
+                DumpAst(ast);
             }
-            DumpAst(ast);
+            
         }
 
         static void Main(string[] args)
         {
             if (args.Length > 0) 
             {
+
                 string path = args[0];
-                Console.WriteLine($"Input file: {path}");
+                if (!Path.HasExtension(path)) path = Path.ChangeExtension(path, "sql");
+                
+                if (File.Exists(path)) 
+                { 
+                    Console.WriteLine($"Input file: {path}");
+                }
+                else 
+                {
+                    Console.WriteLine($"File not found: {path}");
+                    return;
+                }
                 string text = File.ReadAllText(path);
-                Test(text);
+                Compile(text);
             }
             else 
             {

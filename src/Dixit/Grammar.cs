@@ -10,12 +10,12 @@ namespace Ace
         bool Parse(ref Lexer lexer, out Node node);
     }
 
-    public class Unit : IGrammar
+    public class Syntax : IGrammar
     {
         public string Name { get; }
         ISyntax syntax;
 
-        public Unit(string name, ISyntax syntax)
+        public Syntax(string name, ISyntax syntax)
         {
             this.Name = name;
             this.syntax = syntax;
@@ -198,8 +198,6 @@ namespace Ace
             }
             return true;
         }
-
-
     }
 
 }

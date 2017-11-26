@@ -30,8 +30,8 @@ namespace Ace
             switch (word)
             {
                 case IGrammar g: return g;
-                case ISyntax syntax: return new Unit(syntax.GetType().Name, syntax);
-                case string s: return new Unit("Literal", new Literal(s));
+                case ISyntax syntax: return new Syntax(syntax.GetType().Name, syntax);
+                case string s: return new Syntax("Literal", new Literal(s));
                 default: return null;
             }
         }
@@ -77,7 +77,15 @@ namespace Ace
         public static IGrammar Literal(this Language language, string literal)
         {
             var syntax = new Literal(literal);
-            var grammar = new Unit(literal, syntax);
+            var grammar = new Syntax(literal, syntax);
+            language.Add(grammar);
+            return grammar;
+        }
+
+        public static IGrammar Delimit(this Language language, string name, char start, char end, char esc)
+        {
+            var syntax = new Delimit(start, end, esc);
+            var grammar = new Syntax(name, syntax);
             language.Add(grammar);
             return grammar;
         }
@@ -91,7 +99,7 @@ namespace Ace
         {
             var characters = chars.SelectMany(s => s.ToCharArray()).ToArray();
             var charset = new CharSet(name, minlength, characters);
-            var unit = new Unit(name, charset);
+            var unit = new Syntax(name, charset);
             language.Add(unit);
             return unit;
         }

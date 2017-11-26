@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Ace;
 
 namespace Ace.Sql
@@ -7,7 +8,12 @@ namespace Ace.Sql
    public class SqlCompiler 
    {
         Language language;
-      
+
+        IGrammar
+            whitespace, star, fieldname, comma, stringvalue,
+            field, fieldlist, fromclause, eqalityoperator, equation, 
+            whereclause, optionalwhereclause, statement;
+            
         public SqlCompiler()
         {
             language = DefineLanguage();
@@ -17,24 +23,22 @@ namespace Ace.Sql
         {
             var language = new Language();
 
-            var whitespace = language.SetWhitespace(' ', '\n', '\t');
+            whitespace = language.SetWhitespace(' ', '\n', '\t');
             
-            var star = language.Literal("*");
-            var identifier = language.CharSet("FIELD-NAME", 1, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz", "_");
-            var comma = new Literal(",");
-            var field = language.Any("FIELD", identifier, star);
-            var fieldlist = language.GluedSequence("FIELD-LIST", ",", field);
-            var fromclause = language.Sequence("FROM-CLAUSE", identifier);
-            var expression = language.Literal("A");
-            var equalityop = language.Literal("=");
-            var equation = language.Sequence("EQUATION", expression, equalityop, expression);
+            star = language.Literal("*");
+            fieldname = language.CharSet("FIELD-NAME", 1, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz", "_");
+            comma = language.Literal(",");
+            field = language.Any("FIELD", fieldname, star);
+            fieldlist = language.GluedSequence("FIELD-LIST", ",", field);
+            fromclause = language.Sequence("FROM-CLAUSE", fieldname);
+            stringvalue = language.Delimit("string", '"', '"', '\\');
+            eqalityoperator = language.Any("=", "!=", "<", ">");
+            equation = language.Sequence("EQUATION", fieldname, eqalityoperator, stringvalue);
 
-            var whereclause = language.Sequence("WHERE-CLAUSE", "where", equation);
-            var optionalwhereclause = language.Optional("OPTIONAL-WHERE-CLAUSE", whereclause);
+            whereclause = language.Sequence("WHERE-CLAUSE", "where", equation);
+            optionalwhereclause = language.Optional("OPTIONAL-WHERE-CLAUSE", whereclause);
 
-            var statement = language.Sequence("SELECT-STATEMENT", "select", fieldlist, "from", fromclause, optionalwhereclause);
-            
-            
+            statement = language.Sequence("SELECT-STATEMENT", "select", fieldlist, "from", fromclause, optionalwhereclause);
 
             language.Root = statement;
             return language;
@@ -47,21 +51,23 @@ namespace Ace.Sql
             return compiler.Compile(file);
         }
 
+        public Query GetQuery(Node node)
+        {
+            return new Query
+            {
+                Fields = node.Descend(statement, fieldlist, field, fieldname).Values().ToList(),
+                Resource = node.Descend(fromclause, fieldname).Values().FirstOrDefault(),
+                Where = node.Descend(whereclause, equation).Tuple(fieldname, stringvalue).ToDictionary()
+            };
+        }
+
     }
 
-    public class Keyword : ISymbol
+    public class Query
     {
-
-    }
-
-    public class Field : ISymbol
-    {
-
-    }
-
-    public class FieldList : ISymbol
-    {
-
+        public List<string> Fields;
+        public string Resource;
+        public Dictionary<string, string> Where;
     }
 
 
