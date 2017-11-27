@@ -32,7 +32,7 @@ namespace Ace.Sql
             fieldlist = language.GluedSequence("FIELD-LIST", ",", field);
             fromclause = language.Sequence("FROM-CLAUSE", fieldname);
             stringvalue = language.Delimit("string", '"', '"', '\\');
-            eqalityoperator = language.Any("=", "!=", "<", ">");
+            eqalityoperator = language.Any("EqOp", "=", "!=", "<", ">");
             equation = language.Sequence("EQUATION", fieldname, eqalityoperator, stringvalue);
 
             whereclause = language.Sequence("WHERE-CLAUSE", "where", equation);
@@ -53,10 +53,15 @@ namespace Ace.Sql
 
         public Query GetQuery(Node node)
         {
+            var nodes = node.Descend(whereclause, equation).ToList();
+            var tuples = nodes.Tuple(fieldname, stringvalue);
+            var dict = tuples.ToDictionary();
+
             return new Query
             {
                 Fields = node.Descend(statement, fieldlist, field, fieldname).Values().ToList(),
                 Resource = node.Descend(fromclause, fieldname).Values().FirstOrDefault(),
+                
                 Where = node.Descend(whereclause, equation).Tuple(fieldname, stringvalue).ToDictionary()
             };
         }

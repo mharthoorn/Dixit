@@ -195,6 +195,11 @@ namespace Ace
             if (ok) // could be improved by: if we're too deep, the optional is probably the case, but just wrong. It's not misbranched
             {
                 node.Append(n);
+                
+            }
+            else 
+            {
+                lexer.Reset(bookmark);
             }
             return true;
         }

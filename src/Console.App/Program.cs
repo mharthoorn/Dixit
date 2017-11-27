@@ -18,7 +18,7 @@ namespace SpanTest
 
             void print(Node node, int depth) => Console.WriteLine($"{new string(' ', depth*2)}- {node}");
         }
-
+ 
         public static void DumpErrors(Node ast)
         {
             Console.WriteLine("Errors: ");
@@ -48,7 +48,6 @@ namespace SpanTest
                 {
                     Console.WriteLine($" - {pair.Key} = {pair.Value}");
                 }
-                
             }
             else 
             {

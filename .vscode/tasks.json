@@ -2,12 +2,12 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "taskName": "build",
+            "label": "build",
             "command": "dotnet",
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/Dixit.csproj"
+                "${workspaceFolder}/src/Console.App/Dixit.ConsoleApp.csproj"
             ],
             "problemMatcher": "$msCompile"
         }

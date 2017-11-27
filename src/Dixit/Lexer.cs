@@ -53,6 +53,12 @@ namespace Ace
             return new Token(Lexer.Span(left, right), left.Cursor, right.Cursor);
         }
 
+        public bool Advance(char character)
+        {
+            bool ok = (Current == character);
+            if (ok) Advance();
+            return ok;
+        }
         public bool Advance(int count = 1)
         {
             if (Text.Length >= Cursor + count)

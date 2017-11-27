@@ -1,1 +1,1 @@
-select name, family from Organization where name = family
+select name, family from Organization where name = "chalmers"
