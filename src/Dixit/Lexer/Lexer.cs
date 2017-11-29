@@ -85,9 +85,9 @@ namespace Ace
             return i;
         }
 
-        public bool Advance(string literal)
+        public bool Advance(string literal, bool ignoreCase = false)
         {
-            int match = string.Compare(Text, Cursor, literal, 0, literal.Length);
+            int match = string.Compare(Text, Cursor, literal, 0, literal.Length, ignoreCase);
             Advance(literal.Length);
             return match == 0;
         }

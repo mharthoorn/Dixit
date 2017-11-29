@@ -56,18 +56,24 @@ namespace Ace
             return sequence;
         }
 
+        public static IGrammar GluedSequence(this Language language, string name, ISyntax glue, IGrammar item)
+        {
+            var sequence = new GluedSequence(name, item, glue, language.WhiteSpace);
+            language.Add(sequence);
+            return sequence;
+        }
+
         public static IGrammar GluedSequence(this Language language, string name, string glue, IGrammar item)
         {
-            
-            var _glue = new Literal(glue);
-            var sequence = new GluedSequence(name, item, _glue, language.WhiteSpace);
+            var glueSyntax = new Literal(glue);
+            var sequence = new GluedSequence(name, item, glueSyntax, language.WhiteSpace);
             language.Add(sequence);
             return sequence;
         }
 
         public static IGrammar SetWhitespace(this Language language, params char[] characters)
         {
-             var syntax = new CharSet("Whitespace", 0, characters);
+             var syntax = new CharSet(0, characters);
              language.SetWhitespace(syntax);
              var grammar = Language.Grammarize(syntax);
              language.Add(grammar);
@@ -77,6 +83,14 @@ namespace Ace
         public static IGrammar Literal(this Language language, string literal)
         {
             var syntax = new Literal(literal);
+            var grammar = new Syntax(literal, syntax);
+            language.Add(grammar);
+            return grammar;
+        }
+
+        public static IGrammar CiLiteral(this Language language, string literal)
+        {
+            var syntax = new Literal(literal, ignoreCase: true);
             var grammar = new Syntax(literal, syntax);
             language.Add(grammar);
             return grammar;
@@ -97,8 +111,7 @@ namespace Ace
 
         public static IGrammar CharSet(this Language language, string name, int minlength, params string[] chars)
         {
-            var characters = chars.SelectMany(s => s.ToCharArray()).ToArray();
-            var charset = new CharSet(name, minlength, characters);
+            var charset = new CharSet(minlength, chars);
             var unit = new Syntax(name, charset);
             language.Add(unit);
             return unit;

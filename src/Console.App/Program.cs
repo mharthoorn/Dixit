@@ -44,9 +44,9 @@ namespace SpanTest
                 Console.WriteLine($"Query.Fields: {string.Join(", ", query.Fields)}");
                 Console.WriteLine($"Query.Resource: {string.Join(", ", query.Resource)}");
                 Console.WriteLine($"Where: ");
-                foreach(var pair in query.Where)
+                foreach(var filter in query.Where)
                 {
-                    Console.WriteLine($" - {pair.Key} = {pair.Value}");
+                    Console.WriteLine($" - {filter.Name} {filter.Operator} {filter.Value}");
                 }
             }
             else 

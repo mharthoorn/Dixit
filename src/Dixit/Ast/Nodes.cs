@@ -4,58 +4,6 @@ using System.Linq;
 
 namespace Ace
 {
-    public enum State { Good, Bad, Error };
-
-    public class Node
-    {
-        public IGrammar Grammar; 
-        public ISyntax Syntax;
-        public Token Token;
-        public State State;
-        public List<Node> Children;
-
-        public Node(IGrammar grammar, Token token)
-        {
-            this.Grammar = grammar;
-            this.Syntax = null;
-            this.Token = token;
-            this.State = State.Good;
-        }
-        public Node(IGrammar grammar, ISyntax syntax, Token token)
-        {
-            this.Grammar = grammar;
-            this.Syntax = syntax;
-            this.Token = token;
-            this.State = State.Good;
-        }
-
-        public Node(IGrammar grammar, ISyntax syntax, Token token, State state)
-        {
-            this.Grammar = grammar;
-            this.Syntax = syntax;
-            this.Token = token;
-            this.State = state;
-        }
-
-        private void InitChildren()
-        {
-            if (Children == null) Children = new List<Node>();
-        }
-
-        public void Append(Node node)
-        {
-            InitChildren();
-            Children.Add(node);
-        }
-
-        public override string ToString()
-        {
-            string output = $"{Grammar}: {Token}";
-            if (State != State.Good) output +=  $" [{State}]";
-            return output;
-        }
-    }
-
     public static class Nodes
     {
         public static Node CreateRootSyntaxNode()
@@ -160,11 +108,6 @@ namespace Ace
                 var nb = node.Find(b);
                 yield return (na, nb);
             }
-        }
-
-        public static Dictionary<string, string> ToDictionary(this IEnumerable<(Node, Node)> range)
-        {
-            return range.ToDictionary(a => a.Item1.Token.Text, b => b.Item2.Token.Text);
         }
 
         public static void Visit(this Node node, Action<Node> action)

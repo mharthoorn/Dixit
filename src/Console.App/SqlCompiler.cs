@@ -9,10 +9,14 @@ namespace Ace.Sql
    {
         Language language;
 
+        ISyntax
+            keyword;
+
         IGrammar
             whitespace, star, fieldname, comma, stringvalue,
             field, fieldlist, fromclause, eqalityoperator, equation, 
-            whereclause, optionalwhereclause, statement;
+            whereclause, optionalwhereclause, statement,
+            filters;
             
         public SqlCompiler()
         {
@@ -27,6 +31,7 @@ namespace Ace.Sql
             
             star = language.Literal("*");
             fieldname = language.CharSet("FIELD-NAME", 1, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz", "_");
+            keyword = new CharSet(2, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz");
             comma = language.Literal(",");
             field = language.Any("FIELD", fieldname, star);
             fieldlist = language.GluedSequence("FIELD-LIST", ",", field);
@@ -35,7 +40,12 @@ namespace Ace.Sql
             eqalityoperator = language.Any("EqOp", "=", "!=", "<", ">");
             equation = language.Sequence("EQUATION", fieldname, eqalityoperator, stringvalue);
 
-            whereclause = language.Sequence("WHERE-CLAUSE", "where", equation);
+            filters = language.GluedSequence("FILTERS", "and", equation);
+            whereclause = language.Sequence("WHERE-CLAUSE", "where", filters);
+            
+            //logical = language.Any("LOGICAL-OP", logical_and, logical_or);
+            //logical_and = language.CiLiteral("and");
+            //logical_or = language.CiLiteral("or");
             optionalwhereclause = language.Optional("OPTIONAL-WHERE-CLAUSE", whereclause);
 
             statement = language.Sequence("SELECT-STATEMENT", "select", fieldlist, "from", fromclause, optionalwhereclause);
@@ -53,16 +63,14 @@ namespace Ace.Sql
 
         public Query GetQuery(Node node)
         {
-            var nodes = node.Descend(whereclause, equation).ToList();
-            var tuples = nodes.Tuple(fieldname, stringvalue);
-            var dict = tuples.ToDictionary();
+            var nodes = node.Descend(whereclause, filters, equation).ToList();
+            var dict = nodes.ToFilters();
 
             return new Query
             {
                 Fields = node.Descend(statement, fieldlist, field, fieldname).Values().ToList(),
                 Resource = node.Descend(fromclause, fieldname).Values().FirstOrDefault(),
-                
-                Where = node.Descend(whereclause, equation).Tuple(fieldname, stringvalue).ToDictionary()
+                Where = node.Descend(whereclause, filters, equation).ToFilters().ToList()
             };
         }
 
@@ -72,10 +80,33 @@ namespace Ace.Sql
     {
         public List<string> Fields;
         public string Resource;
-        public Dictionary<string, string> Where;
+        public List<Filter> Where;
     }
 
+    public struct Filter
+    {
+        public string Name;
+        public string Operator;
+        public string Value;
+    }
 
-    
-   
+    public static class Extensions
+    {
+        public static IEnumerable<Filter> ToFilters(this IEnumerable<Node> range)
+        {
+            foreach (var node in range)
+            {
+                var filter = new Filter 
+                {
+                    Name = node.Children[0].Token.Text,
+                    Operator = node.Children[1].Children[0].Token.Text,
+                    Value = node.Children[2].Token.Text
+                };
+                yield return filter;
+                
+            }
+        }
+
+    }
+
 }
