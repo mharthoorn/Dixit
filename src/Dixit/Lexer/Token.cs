@@ -1,6 +1,6 @@
 using System;
 
-namespace Ace
+namespace Harthoorn.Dixit
 {
     public struct Token
     {

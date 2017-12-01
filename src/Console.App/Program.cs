@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using Ace;
-using Ace.Sql;
+using Harthoorn.Dixit;
+using Harthoorn.Dixit.Sql;
 
 namespace SpanTest
 {
@@ -13,10 +11,10 @@ namespace SpanTest
         {
             Console.WriteLine();
             Console.WriteLine("Dump of expression tree: ");
-            root.Visit(print, 0, n => n+1);
+            root.Visit(print, 0, n => n+4);
             Console.WriteLine();
 
-            void print(Node node, int depth) => Console.WriteLine($"{new string(' ', depth*2)}- {node}");
+            void print(Node node, int depth) => Console.WriteLine($"{new string(' ', depth)}- {node}");
         }
  
         public static void DumpErrors(Node ast)

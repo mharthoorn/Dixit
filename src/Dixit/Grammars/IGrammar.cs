@@ -1,5 +1,5 @@
 
-namespace Ace
+namespace Harthoorn.Dixit
 {
     public interface IGrammar
     {

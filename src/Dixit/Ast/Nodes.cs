@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Ace
+namespace Harthoorn.Dixit
 {
     public static class Nodes
     {

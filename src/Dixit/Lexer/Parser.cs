@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Ace
+namespace Harthoorn.Dixit
 {
     public class Parser
     {

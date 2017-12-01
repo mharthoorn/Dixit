@@ -1,6 +1,6 @@
 using System.Linq;
 
-namespace Ace
+namespace Harthoorn.Dixit
 {
     public class CharSet : ISyntax
     {

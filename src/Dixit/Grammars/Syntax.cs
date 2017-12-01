@@ -1,4 +1,4 @@
-namespace Ace
+namespace Harthoorn.Dixit
 {
     public class Syntax : IGrammar
     {

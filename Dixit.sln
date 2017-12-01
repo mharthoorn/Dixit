@@ -1,10 +1,10 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2005
+VisualStudioVersion = 15.0.27004.2010
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{E4B3E79C-A1C5-49D6-8866-438935A57DA9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dixit", "src\Dixit\Dixit.csproj", "{1D2FC937-7636-4C03-BA25-868D416AF245}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Harthoorn.Dixit", "src\Dixit\Harthoorn.Dixit.csproj", "{1D2FC937-7636-4C03-BA25-868D416AF245}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dixit.ConsoleApp", "src\Console.App\Dixit.ConsoleApp.csproj", "{0DF5B418-F991-4EFC-AEF5-72BF70032238}"
 EndProject

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Ace
+namespace Harthoorn.Dixit
 {
     public enum State { Good, Bad, Error };
 

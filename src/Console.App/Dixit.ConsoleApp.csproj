@@ -7,6 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Dixit\Dixit.csproj" />
+    <ProjectReference Include="..\Dixit\Harthoorn.Dixit.csproj" />
   </ItemGroup>
 </Project>
