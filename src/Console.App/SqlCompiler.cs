@@ -13,9 +13,9 @@ namespace Harthoorn.Dixit.Sql
 
         IGrammar
             whitespace, star, fieldname, comma, stringvalue,
-            field, fieldlist, fromclause, eqalityoperator, equation, 
+            field, fieldlist, fromclause, eqalityoperator, equality_expression, 
             whereclause, optionalwhereclause, statement,
-            filters;
+            expression, brackets_expression, boolean_expression, boolean_operator;
             
         public SqlCompiler()
         {
@@ -29,25 +29,25 @@ namespace Harthoorn.Dixit.Sql
             whitespace = language.SetWhitespace(' ', '\n', '\t');
             
             star = language.Literal("*");
-            fieldname = language.CharSet("FIELD-NAME", 1, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz", "_");
+            fieldname = language.CharSet("FieldName", 1, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz", "_");
             keyword = new CharSet(2, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz");
             comma = language.Literal(",");
-            field = language.Any("FIELD", fieldname, star);
-            fieldlist = language.GluedSequence("FIELD-LIST", ",", field);
-            fromclause = language.Sequence("FROM-CLAUSE", fieldname);
+            field = language.Any("Field", fieldname, star);
+            fieldlist = language.GluedSequence("FieldList", ",", field);
+            fromclause = language.Sequence("FromClause", fieldname);
             stringvalue = language.Delimit("string", '"', '"', '\\');
-            eqalityoperator = language.Any("EqOp", "=", "!=", "<", ">");
-            equation = language.Sequence("EQUATION", fieldname, eqalityoperator, stringvalue);
-
-            filters = language.GluedSequence("FILTERS", "and", equation);
-            whereclause = language.Sequence("WHERE-CLAUSE", "where", filters);
+            eqalityoperator = language.Any("EqualityOperator", "=", "!=", "<", ">");
             
-            //logical = language.Any("LOGICAL-OP", logical_and, logical_or);
-            //logical_and = language.CiLiteral("and");
-            //logical_or = language.CiLiteral("or");
-            optionalwhereclause = language.Optional("OPTIONAL-WHERE-CLAUSE", whereclause);
+            equality_expression = language.Sequence("Equation", fieldname, eqalityoperator, stringvalue);
+            boolean_operator =  language.Any("BooleanOperator", "and", "or");
+            boolean_expression = language.Sequence("BooleanExpression", equality_expression, boolean_operator, expression);
+            brackets_expression = language.Sequence("BracketExpressions", "(", expression, ")");
+            expression = language.Any("Expression", boolean_expression, equality_expression, brackets_expression);
+            whereclause = language.Sequence("WhereClause", "where", expression);
+            
+            optionalwhereclause = language.Optional("OptionalWhereClause", whereclause);
 
-            statement = language.Sequence("SELECT-STATEMENT", "select", fieldlist, "from", fromclause, optionalwhereclause);
+            statement = language.Sequence("SelectStatement", "select", fieldlist, "from", fromclause, optionalwhereclause);
 
             language.Root = statement;
             return language;
@@ -62,14 +62,14 @@ namespace Harthoorn.Dixit.Sql
 
         public Query GetQuery(Node node)
         {
-            var nodes = node.Descend(whereclause, filters, equation).ToList();
+            var nodes = node.Descend(whereclause, boolean_expression, equality_expression).ToList();
             var dict = nodes.ToFilters();
 
             return new Query
             {
                 Fields = node.Descend(statement, fieldlist, field, fieldname).Values().ToList(),
                 Resource = node.Descend(fromclause, fieldname).Values().FirstOrDefault(),
-                Where = node.Descend(whereclause, filters, equation).ToFilters().ToList()
+                Where = node.Descend(whereclause, boolean_expression, equality_expression).ToFilters().ToList()
             };
         }
 

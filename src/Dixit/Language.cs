@@ -56,6 +56,7 @@ namespace Harthoorn.Dixit
             return sequence;
         }
 
+
         public static IGrammar GluedSequence(this Language language, string name, ISyntax glue, IGrammar item)
         {
             var sequence = new GluedSequence(name, item, glue, language.WhiteSpace);

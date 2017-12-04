@@ -118,5 +118,10 @@ namespace Harthoorn.Dixit
             this = bookmark;
         }
 
+        public override string ToString()
+        {
+            return this.Text.Substring(Cursor, 20);
+        }
+
     }
 }
