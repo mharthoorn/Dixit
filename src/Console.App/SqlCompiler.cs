@@ -25,9 +25,8 @@ namespace Harthoorn.Dixit.Sql
         public Language DefineLanguage()
         {
             var language = new Language();
+            whitespace = language.WhiteSpace(' ', '\n', '\t');
 
-            whitespace = language.SetWhitespace(' ', '\n', '\t');
-            
             star = language.Literal("*");
             fieldname = language.CharSet("FieldName", 1, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz", "_");
             keyword = new CharSet(2, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz");
@@ -56,8 +55,7 @@ namespace Harthoorn.Dixit.Sql
         public (Node, bool) Compile(string text)
         {
             var file = new SourceFile(text);
-            var compiler = new Compiler(language);
-            return compiler.Compile(file);
+            return language.Parse(file);
         }
 
         public Query GetQuery(Node node)

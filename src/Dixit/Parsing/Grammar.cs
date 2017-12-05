@@ -1,30 +1,9 @@
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 
 namespace Harthoorn.Dixit
 {
-    public class Language 
+    public static class Grammar
     {
-        public ISyntax WhiteSpace;
-        List<IGrammar> rules;
-        public IGrammar Root;
-
-        public Language()
-        {
-            rules = new List<IGrammar>();
-        }
-
-        public void Add(IGrammar grammar)
-        {
-            rules.Add(grammar);
-        }
-
-        public void SetWhitespace(ISyntax whitespace)
-        {
-            this.WhiteSpace = whitespace;
-
-        }
-        
         public static IGrammar Grammarize(object word)
         {
             switch (word)
@@ -36,13 +15,9 @@ namespace Harthoorn.Dixit
             }
         }
 
-    }
-
-    public static class LanguageExtensions
-    {
         public static IGrammar Any(this Language language, string name, params object[] words)
         {
-            var list = words.Select(Language.Grammarize).Where(g => g != null).ToList();
+            var list = words.Select(Grammar.Grammarize).Where(g => g != null).ToList();
             var sequence = new Any(name, list, language.WhiteSpace);
             language.Add(sequence);
             return sequence;
@@ -50,12 +25,20 @@ namespace Harthoorn.Dixit
 
         public static IGrammar Sequence(this Language language, string name, params object[] words)
         {
-            var list = words.Select(Language.Grammarize).Where(g => g != null).ToList();
+            var list = words.Select(Grammar.Grammarize).Where(g => g != null).ToList();
             var sequence = new Sequence(name, list, language.WhiteSpace);
             language.Add(sequence);
             return sequence;
         }
 
+        public static IGrammar WhiteSpace(this Language language, params char[] characters)
+        {
+            var syntax = new CharSet(0, characters);
+            language.WhiteSpace = syntax; 
+            var grammar = Grammar.Grammarize(syntax);
+            language.Add(grammar);
+            return grammar;
+        }
 
         public static IGrammar GluedSequence(this Language language, string name, ISyntax glue, IGrammar item)
         {
@@ -70,15 +53,6 @@ namespace Harthoorn.Dixit
             var sequence = new GluedSequence(name, item, glueSyntax, language.WhiteSpace);
             language.Add(sequence);
             return sequence;
-        }
-
-        public static IGrammar SetWhitespace(this Language language, params char[] characters)
-        {
-             var syntax = new CharSet(0, characters);
-             language.SetWhitespace(syntax);
-             var grammar = Language.Grammarize(syntax);
-             language.Add(grammar);
-             return grammar;
         }
 
         public static IGrammar Literal(this Language language, string literal)
