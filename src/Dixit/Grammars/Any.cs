@@ -54,7 +54,7 @@ namespace Harthoorn.Dixit
 
         public override string ToString()
         {
-            return $"{Name}({nameof(Any)})";
+            return $"{Name} ({nameof(Any)})";
         }
 
        

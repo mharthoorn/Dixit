@@ -6,7 +6,7 @@ namespace Harthoorn.Dixit
     {
         // will be a span
         
-        public SourceFile File;
+        public ISourceFile File;
         public int Start;
         public int End;
 
@@ -16,7 +16,7 @@ namespace Harthoorn.Dixit
         public bool IsValid;
         // no error message. Token is too bare metal for that.
 
-        public Token(SourceFile file, int start, int end)
+        public Token(ISourceFile file, int start, int end)
         {
             this.File = file;
             this.Start = start;
@@ -58,7 +58,7 @@ namespace Harthoorn.Dixit
 
         public override string ToString()
         {
-            return $"\"{Text}\" ({Start},{Length})";
+            return $"\"{Text}\" [{Start}..{Length}]";
         }
     }
 

@@ -60,7 +60,7 @@ namespace Harthoorn.Dixit.Sql
                 .Define(field);
 
             fromclause
-                .Define("from", fieldname);
+                .Define(fieldname);
 
             equality_expression
                 .Define(fieldname, equalityoperator, stringvalue);
@@ -90,9 +90,10 @@ namespace Harthoorn.Dixit.Sql
             return language;
         }
 
+
         public (Node, bool) Compile(string text)
         {
-            var file = new SourceFile(text);
+            var file = new MemoryFile(text);
             return language.Parse(file);
         }
 

@@ -68,7 +68,7 @@ namespace Harthoorn.Dixit
 
         public override string ToString()
         {
-            return $"{Name}({nameof(Interlace)})";
+            return $"{Name} ({nameof(Interlace)})";
         }
     }
 

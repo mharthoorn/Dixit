@@ -14,20 +14,19 @@ namespace Harthoorn.Dixit
 
         public Node this[int index] => Children[index];
 
+        public Node(IGrammar grammar)
+        {
+            this.Grammar = grammar;
+            this.Syntax = null;
+            this.Token = default(Token);
+            this.State = State.Good;
+        }
 
         public Node(IGrammar grammar, Token token)
         {
             this.Grammar = grammar;
             this.Syntax = null;
             this.Token = token;
-            this.State = State.Good;
-        }
-
-        public Node(IGrammar grammar)
-        {
-            this.Grammar = grammar;
-            this.Syntax = null;
-            this.Token = default(Token);
             this.State = State.Good;
         }
 
@@ -63,23 +62,21 @@ namespace Harthoorn.Dixit
             }
         }
 
-        public void Fail(Node node)
-        {
-
-        }
-
         public void Expand(Node node)
         {
             this.Token.Expand(node.Token);
         }
 
-        
-
         public override string ToString()
         {
             string output = $"{Grammar}";
-            if (!Token.IsEmpty) output += $": {Token}";
-            if (State != State.Good) output +=  $" [{State}]";
+
+            if (!Token.IsEmpty)
+                output += $": {Token}";
+
+            if (State != State.Good)
+                output +=  $" [{State}]";
+
             return output;
         }
     }

@@ -28,7 +28,7 @@ namespace Harthoorn.Dixit
         public override string ToString()
         {
             string charstring = new string(characters);
-            return $"{nameof(CharSet)}-{charstring}";
+            return $"{nameof(CharSet)}";
         }
     }
 

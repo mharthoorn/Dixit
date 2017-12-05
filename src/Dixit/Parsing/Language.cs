@@ -26,7 +26,7 @@ namespace Harthoorn.Dixit
             rules.Add(grammar);
         }
 
-        public (Node root, bool success) Parse(SourceFile file)
+        public (Node root, bool success) Parse(ISourceFile file)
         {
             var lexer = new Lexer(file);
             bool success = Root.Parse(ref lexer, out Node root);

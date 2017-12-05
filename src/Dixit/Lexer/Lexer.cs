@@ -5,25 +5,10 @@ using System.Linq;
 
 namespace Harthoorn.Dixit
 {
-    public class SourceFile
-    {
-        public string Text;
-
-        public SourceFile(string text)
-        {
-            this.Text = text;
-        }
-
-        public string Span(int start, int end)
-        {
-            int length = Math.Min(end - start, Text.Length - start);
-            return Text.Substring(start, length);
-        }
-    }
 
     public struct Lexer
     {
-        public SourceFile File;
+        public ISourceFile File;
         public int Bookmark;
         public int Cursor;
 
@@ -36,7 +21,7 @@ namespace Harthoorn.Dixit
             }
         }
 
-        public Lexer(SourceFile file, int cursor)
+        public Lexer(ISourceFile file, int cursor)
         {
             this.File = file;
             this.Bookmark = cursor;
@@ -47,7 +32,7 @@ namespace Harthoorn.Dixit
             return new Lexer { File = File, Cursor = Cursor, Bookmark = Bookmark };
         }
 
-        public Lexer(SourceFile file) : this(file, 0) { }
+        public Lexer(ISourceFile file) : this(file, 0) { }
 
         public static string Span(Lexer left, Lexer right)
         {
@@ -148,7 +133,7 @@ namespace Harthoorn.Dixit
             this = bookmark;
         }
 
-        public Token Here => new Token(this.File, this.Current, this.Current);
+        public Token Here => new Token(this.File, this.Cursor, this.Cursor);
 
         public override string ToString()
         {
