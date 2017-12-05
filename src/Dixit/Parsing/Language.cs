@@ -5,7 +5,7 @@ namespace Harthoorn.Dixit
     public class Language 
     {
         internal ISyntax WhiteSpace { get; set; }
-        public IGrammar Root { get; set; }
+        public IGrammar RootGrammar { get; set; }
         List<IGrammar> rules;
         
 
@@ -25,13 +25,6 @@ namespace Harthoorn.Dixit
         {
             rules.Add(grammar);
         }
-
-        public (Node root, bool success) Parse(ISourceFile file)
-        {
-            var lexer = new Lexer(file);
-            bool success = Root.Parse(ref lexer, out Node root);
-            return (root, success);
-        }
+      
     }
-    
 }

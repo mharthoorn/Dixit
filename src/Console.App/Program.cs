@@ -34,6 +34,7 @@ namespace SpanTest
 
             var compiler = new SqlCompiler();
             (var ast, var success) = compiler.Compile(text);
+
             if (success)
             {
                 Console.WriteLine("Compilation succeeded.");
@@ -42,11 +43,8 @@ namespace SpanTest
                 var query = compiler.GetQuery(ast);
                 Console.WriteLine($"Query.Fields: {string.Join(", ", query.Fields)}");
                 Console.WriteLine($"Query.Resource: {string.Join(", ", query.Resource)}");
-                Console.WriteLine($"Where: ");
-                foreach(var filter in query.Where)
-                {
-                    Console.WriteLine($" - {filter.Name} {filter.Operator} {filter.Value}");
-                }
+                Console.WriteLine($"Where: " + string.Join(", ", query.Where.Select(f => $"({f.Name} {f.Operator} {f.Value})")));
+                
             }
             else 
             {

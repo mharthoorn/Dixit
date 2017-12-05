@@ -84,9 +84,9 @@ namespace Harthoorn.Dixit.Sql
                 .Define(whereclause);
 
             statement
-                .Define("select", fieldlist, "from", fromclause, whereclause);
+                .Define("select", fieldlist, "from", fromclause, optionalwhereclause);
 
-            language.Root = statement;
+            language.RootGrammar = statement;
             return language;
         }
 
@@ -94,7 +94,9 @@ namespace Harthoorn.Dixit.Sql
         public (Node, bool) Compile(string text)
         {
             var file = new MemoryFile(text);
-            return language.Parse(file);
+            var compiler = new Compiler(language);
+            var success = compiler.Parse(file, out Node root);
+            return (root, success);
         }
 
         public Query GetQuery(Node node)

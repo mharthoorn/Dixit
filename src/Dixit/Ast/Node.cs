@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace Harthoorn.Dixit
 {
-    public enum State { Good, Invalid, Error };
+    public enum State { Valid, Invalid, Error };
 
     public class Node
     {
@@ -14,20 +14,12 @@ namespace Harthoorn.Dixit
 
         public Node this[int index] => Children[index];
 
-        public Node(IGrammar grammar)
-        {
-            this.Grammar = grammar;
-            this.Syntax = null;
-            this.Token = default(Token);
-            this.State = State.Good;
-        }
-
         public Node(IGrammar grammar, Token token)
         {
             this.Grammar = grammar;
             this.Syntax = null;
             this.Token = token;
-            this.State = State.Good;
+            this.State = State.Valid;
         }
 
         public Node(IGrammar grammar, ISyntax syntax, Token token)
@@ -35,7 +27,7 @@ namespace Harthoorn.Dixit
             this.Grammar = grammar;
             this.Syntax = syntax;
             this.Token = token;
-            this.State = State.Good;
+            this.State = State.Valid;
         }
 
         public Node(IGrammar grammar, ISyntax syntax, Token token, State state)
@@ -58,7 +50,7 @@ namespace Harthoorn.Dixit
             {
                 Children.Add(node);
                 this.Expand(node);
-                if (node.State != State.Good) this.State = State.Invalid;
+                if (node.State != State.Valid) this.State = State.Invalid;
             }
         }
 
@@ -74,7 +66,7 @@ namespace Harthoorn.Dixit
             if (!Token.IsEmpty)
                 output += $": {Token}";
 
-            if (State != State.Good)
+            if (State != State.Valid)
                 output +=  $" [{State}]";
 
             return output;

@@ -6,14 +6,9 @@ namespace Harthoorn.Dixit
 {
     public static class Nodes
     {
-        public static Node CreateRootSyntaxNode()
-        {
-            return new Node(null);
-        }
-
         public static Node Create(IGrammar grammar, ISyntax syntax, Token token)
         {
-            var state = token.IsValid ? State.Good : State.Error;
+            var state = token.IsValid ? State.Valid : State.Error;
             var node = new Node(grammar, syntax, token, state);
             return node;
         }
@@ -153,6 +148,14 @@ namespace Harthoorn.Dixit
             action(node, covariable);
             if (node.Children == null) return;
             foreach(var n in node.Children) Visit(n, action, cofunc(covariable), cofunc);
+        }
+
+        public static void Prune(this Node node)
+        {
+            if (node.Children is null) return;
+
+            node.Children = node.Children.Where(c => c.State == State.Valid).ToList();
+            foreach (var c in node.Children) c.Prune();
         }
     }
 

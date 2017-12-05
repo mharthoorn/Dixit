@@ -20,12 +20,17 @@ namespace Harthoorn.Dixit
         public bool Parse(ref Lexer lexer, out Node node)
         {
             var bookmark = lexer;
-            node = new Node(this);
+            node = new Node(this, lexer.Here);
 
             var ok = grammar.Parse(ref lexer, out Node n);
             node.Append(n); // always save good or bad.
             if (!ok) lexer.Reset(bookmark);
-            return true;
+            return true; 
+        }
+
+        public override string ToString()
+        {
+            return nameof(Optional);
         }
     }
 

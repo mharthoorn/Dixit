@@ -58,7 +58,7 @@ namespace Harthoorn.Dixit
 
         public override string ToString()
         {
-            return $"\"{Text}\" [{Start}..{Length}]";
+            return $"\"{Text}\" [{Start}..{End}]";
         }
     }
 
