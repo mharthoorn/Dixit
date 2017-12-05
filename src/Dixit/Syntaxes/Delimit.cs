@@ -1,12 +1,12 @@
 namespace Harthoorn.Dixit
 {
-    public class Delimit : ISyntax
+    public class Delimiters : ISyntax
     {
         public char Start;
         public char Escape;
         public char End;
 
-        public Delimit(char start, char end, char esc)
+        public Delimiters(char start, char end, char esc)
         {
             this.Start = start;
             this.End = end;
@@ -30,6 +30,11 @@ namespace Harthoorn.Dixit
             if (ok) { lexer.Advance(); lexer.Consume(); } // consume the End character.
             //token.Text = token.Text.TrimStart(Start).TrimEnd(End);
             return token.FailWhen(!ok);
+        }
+
+        public override string ToString()
+        {
+            return nameof(Delimiters);
         }
     }
 

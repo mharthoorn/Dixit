@@ -98,7 +98,7 @@ namespace Harthoorn.Dixit
 
         public static IGrammar Delimit(this Language language, string name, char start, char end, char esc)
         {
-            var syntax = new Delimit(start, end, esc);
+            var syntax = new Delimiters(start, end, esc);
             var grammar = new Syntax(name, syntax);
             language.Add(grammar);
             return grammar;
