@@ -6,24 +6,32 @@ namespace Harthoorn.Dixit
     public class Any : IGrammar
     {
         public string Name { get; }
-        List<IGrammar> items;
+        IList<IGrammar> children { get; set; }
         ISyntax whitespace;
 
-        public Any(string name, IEnumerable<IGrammar> items, ISyntax whitespace)
+        public Any(string name, ISyntax whitespace)
         {
             this.Name = name;
             this.whitespace = whitespace;
-            this.items = items.ToList();
+            children = new List<IGrammar>();
         }
+         
+        public IGrammar Define(IEnumerable<IGrammar> grammars)
+        {
+            this.children = grammars.ToList();
+            return this;
+        }
+
 
         public bool Parse(ref Lexer lexer, out Node node)
         {
             whitespace.Parse(ref lexer); // consume whitespace.
+            Node failure = null;
 
             node = new Node(this, lexer.Consume());
             var lexerbm = lexer;
 
-            foreach (var grammar in items)
+            foreach (var grammar in children)
             {
                 lexer.Reset(lexerbm);
 
@@ -33,16 +41,23 @@ namespace Harthoorn.Dixit
                     node.Append(n);
                     return true;
                 }
-
+                else
+                {
+                    failure = Nodes.GetLongest(n, failure);
+                }
             }
-            node.State = State.Error;
+
+            node.Append(failure);
             return false;
+                
         }
 
         public override string ToString()
         {
             return $"{Name}({nameof(Any)})";
         }
+
+       
     }
 
 }

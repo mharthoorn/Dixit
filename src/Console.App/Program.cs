@@ -2,6 +2,7 @@
 using System.IO;
 using Harthoorn.Dixit;
 using Harthoorn.Dixit.Sql;
+using System.Linq;
 
 namespace SpanTest
 {
@@ -75,6 +76,13 @@ namespace SpanTest
                 }
                 string text = File.ReadAllText(path);
                 Compile(text);
+
+                if (args.Contains("-wait"))
+                {
+                    Console.Write("Press any key...");
+                    Console.ReadKey();
+                    Console.WriteLine();
+                }
             }
             else 
             {

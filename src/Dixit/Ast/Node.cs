@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace Harthoorn.Dixit
 {
-    public enum State { Good, Bad, Error };
+    public enum State { Good, Invalid, Error };
 
     public class Node
     {
@@ -13,7 +13,8 @@ namespace Harthoorn.Dixit
         public List<Node> Children;
 
         public Node this[int index] => Children[index];
-        
+
+
         public Node(IGrammar grammar, Token token)
         {
             this.Grammar = grammar;
@@ -21,6 +22,15 @@ namespace Harthoorn.Dixit
             this.Token = token;
             this.State = State.Good;
         }
+
+        public Node(IGrammar grammar)
+        {
+            this.Grammar = grammar;
+            this.Syntax = null;
+            this.Token = default(Token);
+            this.State = State.Good;
+        }
+
         public Node(IGrammar grammar, ISyntax syntax, Token token)
         {
             this.Grammar = grammar;
@@ -45,12 +55,30 @@ namespace Harthoorn.Dixit
         public void Append(Node node)
         {
             InitChildren();
-            Children.Add(node);
+            if (node != null)
+            {
+                Children.Add(node);
+                this.Expand(node);
+                if (node.State != State.Good) this.State = State.Invalid;
+            }
         }
+
+        public void Fail(Node node)
+        {
+
+        }
+
+        public void Expand(Node node)
+        {
+            this.Token.Expand(node.Token);
+        }
+
+        
 
         public override string ToString()
         {
-            string output = $"{Grammar}: {Token}";
+            string output = $"{Grammar}";
+            if (!Token.IsEmpty) output += $": {Token}";
             if (State != State.Good) output +=  $" [{State}]";
             return output;
         }

@@ -6,27 +6,25 @@ namespace Harthoorn.Dixit
         public string Name {get;}
         IGrammar grammar;
 
-        public Optional(string name, IGrammar grammar)
+        public Optional(string name)
         {
             this.Name = name;
+        }
+
+        public Optional Define(IGrammar grammar)
+        {
             this.grammar = grammar;
+            return this;
         }
 
         public bool Parse(ref Lexer lexer, out Node node)
         {
             var bookmark = lexer;
-            node = new Node(this, Token.Empty());
+            node = new Node(this);
 
             var ok = grammar.Parse(ref lexer, out Node n);
-            if (ok) // could be improved by: if we're too deep, the optional is probably the case, but just wrong. It's not misbranched
-            {
-                node.Append(n);
-                
-            }
-            else 
-            {
-                lexer.Reset(bookmark);
-            }
+            node.Append(n); // always save good or bad.
+            if (!ok) lexer.Reset(bookmark);
             return true;
         }
     }

@@ -8,45 +8,83 @@ namespace Harthoorn.Dixit.Sql
    {
         Language language;
 
-        ISyntax
-            keyword;
-
-        IGrammar
-            whitespace, star, fieldname, comma, stringvalue,
-            field, fieldlist, fromclause, eqalityoperator, equality_expression, 
-            whereclause, optionalwhereclause, statement,
-            expression, brackets_expression, boolean_expression, boolean_operator;
-            
         public SqlCompiler()
         {
             language = DefineLanguage();
         }
 
+        ISyntax
+            keyword;
+
+        IGrammar
+            whitespace, star, fieldname, comma, stringvalue,
+            field, equalityoperator, fieldlist, fromclause, equality_expression,
+            boolean_operator, boolean_expression, brackets_expression, expression,
+            whereclause, statement, optionalwhereclause;
+
+
         public Language DefineLanguage()
         {
             var language = new Language();
+            
             whitespace = language.WhiteSpace(' ', '\n', '\t');
+            keyword = new CharSet(2, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz");
 
             star = language.Literal("*");
             fieldname = language.CharSet("FieldName", 1, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz", "_");
-            keyword = new CharSet(2, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz");
+            
             comma = language.Literal(",");
-            field = language.Any("Field", fieldname, star);
-            fieldlist = language.GluedSequence("FieldList", ",", field);
-            fromclause = language.Sequence("FromClause", fieldname);
+            field = language.Any("Field");
+            
             stringvalue = language.Delimit("string", '"', '"', '\\');
-            eqalityoperator = language.Any("EqualityOperator", "=", "!=", "<", ">");
-            
-            equality_expression = language.Sequence("Equation", fieldname, eqalityoperator, stringvalue);
-            boolean_operator =  language.Any("BooleanOperator", "and", "or");
-            boolean_expression = language.Sequence("BooleanExpression", equality_expression, boolean_operator, expression);
-            brackets_expression = language.Sequence("BracketExpressions", "(", expression, ")");
-            expression = language.Any("Expression", boolean_expression, equality_expression, brackets_expression);
-            whereclause = language.Sequence("WhereClause", "where", expression);
-            
-            optionalwhereclause = language.Optional("OptionalWhereClause", whereclause);
+            equalityoperator = language.Any("EqualityOperator");
+            fieldlist = language.Interlace("FieldList", ",");
+            fromclause = language.Sequence("FromClause");
+            equality_expression = language.Sequence("Equation");
+            boolean_operator =  language.Any("BooleanOperator");
+            boolean_expression = language.Sequence("BooleanExpression");
+            brackets_expression = language.Sequence("BracketExpressions");
+            expression = language.Any("Expression");
+            whereclause = language.Sequence("WhereClause");
+            statement = language.Sequence("SelectStatement");
 
-            statement = language.Sequence("SelectStatement", "select", fieldlist, "from", fromclause, optionalwhereclause);
+            optionalwhereclause = language.Optional("OptionalWhereClause");
+
+            field
+                .Define(fieldname, star);
+
+            equalityoperator
+                .Define("=", "!=", "<", ">");
+
+            fieldlist
+                .Define(field);
+
+            fromclause
+                .Define("from", fieldname);
+
+            equality_expression
+                .Define(fieldname, equalityoperator, stringvalue);
+
+            boolean_operator
+                .Define("and", "or");
+
+            boolean_expression
+                .Define(equality_expression, boolean_operator, expression);
+
+            brackets_expression
+                .Define("(", expression, ")");
+
+            expression
+                .Define(boolean_expression, equality_expression, brackets_expression);
+
+            whereclause
+                .Define("where", expression);
+
+            optionalwhereclause
+                .Define(whereclause);
+
+            statement
+                .Define("select", fieldlist, "from", fromclause, whereclause);
 
             language.Root = statement;
             return language;

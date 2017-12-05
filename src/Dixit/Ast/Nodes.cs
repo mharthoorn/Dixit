@@ -8,7 +8,7 @@ namespace Harthoorn.Dixit
     {
         public static Node CreateRootSyntaxNode()
         {
-            return new Node(null, null, Token.Empty());
+            return new Node(null);
         }
 
         public static Node Create(IGrammar grammar, ISyntax syntax, Token token)
@@ -20,7 +20,7 @@ namespace Harthoorn.Dixit
 
         public static IEnumerable<Node> GetErrors(this Node root)
         {
-            return root.Descendants().Where(n => n.Token.IsValid == false);
+            return root.Descendants().Where(n => n.State == State.Error);
         }
 
         public static IEnumerable<Node> Descendants(this Node node)
@@ -36,6 +36,12 @@ namespace Harthoorn.Dixit
                      yield return d;
                  }
             }
+        }
+
+        public static Node Encapsulate(this Node node, Lexer previous, Lexer current)
+        {
+            node.Token = Lexer.Encapsulate(previous, current);
+            return node;
         }
 
         public static Node Find(this Node node, Predicate<Node> predicate)
@@ -108,6 +114,31 @@ namespace Harthoorn.Dixit
                 var nb = node.Find(b);
                 yield return (na, nb);
             }
+        }
+
+        public static int Length(this Node node)
+        {
+            return node.Token.Length;
+        }
+
+        public static Node Longest(this IEnumerable<Node> nodes)
+        {
+            Node longest = null; int max = 0;
+            foreach(var node in nodes)
+            {
+                var len = node?.Length() ?? 0;
+                if (len > max)
+                {
+                    longest = node;
+                    max = len;
+                }
+            }
+            return longest;
+        }
+
+        public static Node GetLongest(params Node[] nodes)
+        {
+            return Longest(nodes);
         }
 
         public static void Visit(this Node node, Action<Node> action)

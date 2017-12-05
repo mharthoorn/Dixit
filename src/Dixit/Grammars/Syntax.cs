@@ -20,7 +20,7 @@ namespace Harthoorn.Dixit
 
         public override string ToString()
         {
-            return $"{Name}";
+            return $"{Name} ({syntax})";
         }
     }
 

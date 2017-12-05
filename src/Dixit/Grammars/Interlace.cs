@@ -1,17 +1,21 @@
 namespace Harthoorn.Dixit
 {
-    public class GluedSequence : IGrammar
+    public class Interlace : IGrammar
     {
         public string Name { get; }
         IGrammar item;
         ISyntax whitespace;
         ISyntax glue;
 
-        public GluedSequence(string name, IGrammar item, ISyntax glue, ISyntax whitespace)
+        public Interlace(string name, ISyntax glue, ISyntax whitespace)
         {
             this.Name = name;
             this.whitespace = whitespace;
             this.glue = glue;
+        }
+
+        public void Define(IGrammar item)
+        {
             this.item = item;
         }
 
@@ -38,6 +42,7 @@ namespace Harthoorn.Dixit
             whitespace.Parse(ref lexer); // consume whitespace.
 
             node = new Node(this, lexer.Consume());
+            var bm = lexer;
 
             bool ok = true, first = true;
             while (ok)
@@ -46,7 +51,11 @@ namespace Harthoorn.Dixit
                 {
                     whitespace.Parse(ref lexer);
                     ok = ParseGlue(ref lexer);
-                    if (!ok) return true; // we are at the end of the list
+                    if (!ok)
+                    {
+                        ok = true; // we are at the end of the list
+                        break; 
+                    }
                 }
                 first = false;
 
@@ -59,7 +68,7 @@ namespace Harthoorn.Dixit
 
         public override string ToString()
         {
-            return $"{Name}({nameof(GluedSequence)})";
+            return $"{Name}({nameof(Interlace)})";
         }
     }
 

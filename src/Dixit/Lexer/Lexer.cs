@@ -13,6 +13,12 @@ namespace Harthoorn.Dixit
         {
             this.Text = text;
         }
+
+        public string Span(int start, int end)
+        {
+            int length = Math.Min(end - start, Text.Length - start);
+            return Text.Substring(start, length);
+        }
     }
 
     public struct Lexer
@@ -45,12 +51,13 @@ namespace Harthoorn.Dixit
 
         public static string Span(Lexer left, Lexer right)
         {
-            return left.Text.Substring(left.Cursor, right.Cursor - left.Cursor);
+            var file = left.File;
+            return file.Span(left.Cursor, right.Cursor);
         }
 
         public static Token CreateToken(Lexer left, Lexer right)
         {
-            return new Token(Lexer.Span(left, right), left.Cursor, right.Cursor);
+            return new Token(left.File, left.Cursor, right.Cursor);
         }
 
         public bool Advance(char character)
@@ -96,8 +103,7 @@ namespace Harthoorn.Dixit
 
         private Token CreateToken()
         {
-            string s = Text.Substring(Bookmark, Cursor - Bookmark);
-            return new Token(s, Bookmark, Cursor - Bookmark);
+            return new Token(this.File, Bookmark, Cursor);
         }
 
         public Token Consume()
@@ -113,14 +119,41 @@ namespace Harthoorn.Dixit
             return Consume();
         }
 
+        public Token Append(Token A, Token B)
+        {
+            return new Token(A.File, A.Start, B.End);
+        }
+
+        public Token Consume(Token B)
+        { 
+            this.Bookmark = B.End;
+            return new Token(this.File, this.Cursor, B.End);
+        }
+
+        public Token Consume(Lexer previous, Token last)
+        { 
+            var start = previous.Bookmark;
+            var end = last.End;
+            this.Bookmark = this.Cursor;
+            return new Token(this.File, start, end);
+        }
+
+        public static Token Encapsulate(Lexer previous, Lexer current)
+        {
+            return new Token(previous.File, previous.Current, current.Current);
+        }
+
         public void Reset(Lexer bookmark)
         {
             this = bookmark;
         }
 
+        public Token Here => new Token(this.File, this.Current, this.Current);
+
         public override string ToString()
         {
-            return this.Text.Substring(Cursor, 20);
+            string substring = this.File.Span(this.Bookmark, this.Current);
+            return "...|" + substring + "...";
         }
 
     }

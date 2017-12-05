@@ -14,6 +14,13 @@ namespace Harthoorn.Dixit
             rules = new List<IGrammar>();
         }
 
+        public T Declare<T>(string name) where T : IGrammar, new()
+        {
+            var grammar = new T();
+            rules.Add(grammar);
+            return grammar;
+        }
+
         public void Add(IGrammar grammar)
         {
             rules.Add(grammar);
@@ -26,4 +33,5 @@ namespace Harthoorn.Dixit
             return (root, success);
         }
     }
+    
 }

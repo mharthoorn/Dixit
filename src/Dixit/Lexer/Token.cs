@@ -5,20 +5,25 @@ namespace Harthoorn.Dixit
     public struct Token
     {
         // will be a span
-        public string Text;
+        
+        public SourceFile File;
         public int Start;
-        public int Length;
+        public int End;
+
+        public int Length => End - Start;
+        public string Text => File.Span(Start, End);
         
         public bool IsValid;
         // no error message. Token is too bare metal for that.
 
-        public Token(string text, int start, int length)
+        public Token(SourceFile file, int start, int end)
         {
-            Text = text;
+            this.File = file;
             this.Start = start;
-            this.Length = length;
+            this.End = end;
             this.IsValid = true;
         }
+
 
         public Token FailsOnEmpty()
         {
@@ -43,14 +48,12 @@ namespace Harthoorn.Dixit
             return this;
         }
 
-        public static bool IsEmpty(Token token)
-        {
-            return token.Length == 0;
-        }
+        public bool IsEmpty => this.Length == 0;
 
-        public static Token Empty()
+
+        public void Expand(Token token)
         {
-            return new Token("", 0, 0);
+            if (token.End > this.End) this.End = token.End;
         }
 
         public override string ToString()

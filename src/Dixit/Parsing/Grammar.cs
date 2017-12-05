@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Harthoorn.Dixit
 {
@@ -15,19 +17,42 @@ namespace Harthoorn.Dixit
             }
         }
 
-        public static IGrammar Any(this Language language, string name, params object[] words)
+        public static IEnumerable<IGrammar> Grammarize(this object[] words)
         {
-            var list = words.Select(Grammar.Grammarize).Where(g => g != null).ToList();
-            var sequence = new Any(name, list, language.WhiteSpace);
+            return words.Select(Grammar.Grammarize).Where(g => g != null);
+        }
+
+        public static IGrammar Define(this IGrammar grammar, params object[] items)
+        {
+            var list = Grammarize(items);
+            switch (grammar)
+            {
+                case Any g: g.Define(list); return g;
+                case Sequence g: g.Define(list); return g;
+                case Optional g: g.Define(list.FirstOrDefault()); return g;
+                case Interlace g: g.Define(list.FirstOrDefault()); return g;
+                default: throw new ArgumentException("Invalid define");
+            }
+        }
+
+        public static Any Any(this Language language, string name)
+        {
+            var sequence = new Any(name, language.WhiteSpace);
             language.Add(sequence);
             return sequence;
         }
 
-        public static IGrammar Sequence(this Language language, string name, params object[] words)
+        public static Sequence Sequence(this Language language, string name)
         {
-            var list = words.Select(Grammar.Grammarize).Where(g => g != null).ToList();
-            var sequence = new Sequence(name, list, language.WhiteSpace);
+            var sequence = new Sequence(name, language.WhiteSpace);
             language.Add(sequence);
+            return sequence;
+        }
+
+        public static Sequence Define(this Sequence sequence, params object[] words)
+        {
+            var list = words.Select(Grammar.Grammarize).Where(g => g != null);
+            sequence.Define(list);
             return sequence;
         }
 
@@ -40,17 +65,17 @@ namespace Harthoorn.Dixit
             return grammar;
         }
 
-        public static IGrammar GluedSequence(this Language language, string name, ISyntax glue, IGrammar item)
+        public static Interlace Interlace(this Language language, string name, ISyntax glue)
         {
-            var sequence = new GluedSequence(name, item, glue, language.WhiteSpace);
+            var sequence = new Interlace(name, glue, language.WhiteSpace);
             language.Add(sequence);
             return sequence;
         }
 
-        public static IGrammar GluedSequence(this Language language, string name, string glue, IGrammar item)
+        public static Interlace Interlace(this Language language, string name, string glue)
         {
             var glueSyntax = new Literal(glue);
-            var sequence = new GluedSequence(name, item, glueSyntax, language.WhiteSpace);
+            var sequence = new Interlace(name, glueSyntax, language.WhiteSpace);
             language.Add(sequence);
             return sequence;
         }
@@ -92,12 +117,12 @@ namespace Harthoorn.Dixit
             return unit;
         }
 
-        public static IGrammar Optional(this Language language, string name, IGrammar grammar)
+        public static Optional Optional(this Language language, string name)
         {
-            var optional = new Optional(name, grammar);
+            var optional = new Optional(name);
             language.Add(optional);
             return optional;
         }
-        
+                
     }
 }

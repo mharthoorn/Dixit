@@ -9,11 +9,16 @@ namespace Harthoorn.Dixit
         List<IGrammar> list;
         ISyntax whitespace;
 
-        public Sequence(string name, IEnumerable<IGrammar> items, ISyntax whitespace)
+        public Sequence(string name, ISyntax whitespace)
         {
             this.Name = name;
             this.whitespace = whitespace;
-            list = items.ToList();
+        }
+
+        public IGrammar Define(IEnumerable<IGrammar> items)
+        {
+            this.list = items.ToList();
+            return this;
         }
 
 
@@ -21,18 +26,22 @@ namespace Harthoorn.Dixit
         {
             whitespace.Parse(ref lexer); // consume whitespace.
 
-            node = new Node(this, lexer.Consume());
-            
+            node = new Node(this, lexer.Here);
+
+            Lexer bookmark = lexer;
 
             foreach (var grammar in list)
             {
                 whitespace.Parse(ref lexer);
 
                 bool ok = grammar.Parse(ref lexer, out Node n);
-                if (ok) node.Append(n); else return false;
+                node.Append(n);
+                if (!ok) return false;
             }
+
             return true;
         }
+
 
         public override string ToString()
         {
