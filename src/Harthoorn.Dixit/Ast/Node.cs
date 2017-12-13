@@ -12,6 +12,9 @@ namespace Harthoorn.Dixit
         public State State;
         public List<Node> Children;
 
+        public string Text => Token.Text;
+        
+
         public Node this[int index] => Children[index];
 
         public Node(IGrammar grammar, Token token)

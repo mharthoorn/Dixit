@@ -49,6 +49,13 @@ namespace Harthoorn.Dixit
             return sequence;
         }
 
+        public static IGrammar Syntax(this Language language, string name, ISyntax syntax)
+        {
+            var grammar = new Syntax(name, syntax);
+            language.Add(grammar);
+            return grammar;
+        }
+
         public static Sequence Define(this Sequence sequence, params object[] words)
         {
             var list = words.Select(Grammar.Grammarize).Where(g => g != null);
@@ -80,10 +87,10 @@ namespace Harthoorn.Dixit
             return sequence;
         }
 
-        public static IGrammar Literal(this Language language, string literal)
+        public static IGrammar Literal(this Language language, string name, string literal)
         {
             var syntax = new Literal(literal);
-            var grammar = new Syntax(literal, syntax);
+            var grammar = new Syntax(name, syntax);
             language.Add(grammar);
             return grammar;
         }
@@ -124,5 +131,6 @@ namespace Harthoorn.Dixit
             return optional;
         }
                 
+
     }
 }
