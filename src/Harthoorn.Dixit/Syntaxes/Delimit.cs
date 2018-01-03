@@ -17,8 +17,8 @@ namespace Harthoorn.Dixit
         {
             bool ok = true, esc = false;
             var bookmark = lexer;
-            lexer.Advance(Start);
-            lexer.Consume();
+            if (lexer.Advance(Start)) lexer.Consume(); else return lexer.Here.FailsOnEmpty();
+            
             do 
             {
                 if (!esc && lexer.Current == End) break;
@@ -27,7 +27,7 @@ namespace Harthoorn.Dixit
             } 
             while (ok);
             var token = lexer.Consume();
-            if (ok) { lexer.Advance(); lexer.Consume(); } // consume the End character.
+            if (ok) { lexer.Advance(End); lexer.Consume(); } // consume the End character.
             //token.Text = token.Text.TrimStart(Start).TrimEnd(End);
             return token.FailWhen(!ok);
         }

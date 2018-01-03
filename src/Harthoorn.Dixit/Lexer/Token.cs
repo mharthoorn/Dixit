@@ -39,7 +39,7 @@ namespace Harthoorn.Dixit
             return this;
         }
 
-         public Token FailWhen(bool predicate)
+        public Token FailWhen(bool predicate)
         {
             if (predicate)
             {

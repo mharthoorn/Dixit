@@ -38,6 +38,7 @@ namespace Harthoorn.Dixit.Tests
             string s = "select aap, noot, mies from users where id = '4' and name = 'John' ";
             (Node node, bool success) = compiler.Compile(s);
             Assert.True(success);
+
             var fields = node.Descend(SQL.Statement, SQL.WhereClause, SQL.FieldName).ToList();
             Assert.True(fields[0].Text == "id");
             Assert.True(fields[1].Text == "name");
@@ -48,10 +49,11 @@ namespace Harthoorn.Dixit.Tests
         }
 
         [Fact]
-        public void BrokenWhereClause()
+        public void ErrorInOptional()
         {
-            string s = "select aap, noot, mies from users where id = '4', name = 'John' ";
+            string s = "select aap, noot, mies from users where @#$ ";
             (Node node, bool success) = compiler.Compile(s);
+            Assert.Equal(State.Invalid, node.State);
             Assert.False(success);
             // the optional where clause should still fail the whole.
             // it should not end with "unexpected characters at end of statement "where id =..."

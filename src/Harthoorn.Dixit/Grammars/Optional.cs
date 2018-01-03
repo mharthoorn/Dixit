@@ -25,6 +25,7 @@ namespace Harthoorn.Dixit
             var ok = grammar.Parse(ref lexer, out Node n);
             node.Append(n); // always save good or bad.
             if (!ok) lexer.Reset(bookmark);
+            node.State = State.Valid;
             return true; 
         }
 

@@ -51,6 +51,7 @@ namespace Harthoorn.Dixit
             if (ok) Advance();
             return ok;
         }
+
         public bool Advance(int count = 1)
         {
             if (Text.Length >= Cursor + count)
@@ -134,6 +135,13 @@ namespace Harthoorn.Dixit
         }
 
         public Token Here => new Token(this.File, this.Cursor, this.Cursor);
+
+        public Token Finish()
+        {
+            do { } while (Advance());
+            var token = Consume();
+            return token.FailWhen(!token.IsEmpty);
+        }
 
         public override string ToString()
         {

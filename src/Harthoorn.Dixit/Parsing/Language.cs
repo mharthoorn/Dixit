@@ -4,8 +4,10 @@ namespace Harthoorn.Dixit
 {
     public class Language 
     {
-        internal ISyntax WhiteSpace { get; set; }
-        public IGrammar RootGrammar { get; set; }
+        public IGrammar Program { get; private set; }
+        public ISyntax WhiteSpace { get; set; }
+        IGrammar RootGrammar { get; set; }
+        IGrammar Finish { get; set; }
         List<IGrammar> rules;
         
 
@@ -25,6 +27,13 @@ namespace Harthoorn.Dixit
         {
             rules.Add(grammar);
         }
-      
+
+        public void Root(IGrammar root)
+        {
+            this.RootGrammar = root;
+            this.Program = new Sequence("Program", WhiteSpace);
+            var finish = new Finish();
+            Program.Define(root, finish);
+        }
     }
 }

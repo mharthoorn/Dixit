@@ -77,7 +77,7 @@
             Statement
                 .Define("select", FieldList, "from", FromClause, OptionalWhereClause);
 
-            Language.RootGrammar = Statement;
+            Language.Root(Statement);
         }
     }
 
