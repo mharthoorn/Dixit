@@ -19,7 +19,7 @@ namespace Harthoorn.FQuery
         {
             Language = new Language();
 
-            Whitespace = Language.WhiteSpace(' ', '\n', '\t');
+            Whitespace = Language.WhiteSpace(' ', '\n', '\r', '\t');
             keyword = new CharSet(2, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz");
             identifier = new Identifier();
 

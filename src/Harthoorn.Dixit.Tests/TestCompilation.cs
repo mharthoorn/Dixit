@@ -9,7 +9,7 @@ namespace Harthoorn.Dixit.Tests
     {
         FQueryCompiler compiler = new FQueryCompiler();
 
-        
+
         [Fact]
         public void BasicSelect()
         {
@@ -46,6 +46,19 @@ namespace Harthoorn.Dixit.Tests
             var values = node.Descend(FQL.Statement, FQL.WhereClause, FQL.StringValue).ToList();
             Assert.True(values[0].Text == "4");
             Assert.True(values[1].Text == "John");
+        }
+
+        [Fact]
+        public void WhiteSpace()
+        {
+            string query = @"select
+                    id,
+                    gender,
+                    name
+                from 
+                    Patient";
+            (Node node, bool success) = compiler.Compile(query);
+            Assert.True(success);
         }
 
         [Fact]
