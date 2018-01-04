@@ -29,11 +29,11 @@ namespace Harthoorn.Dixit
             Node failure = null;
 
             node = new Node(this, lexer.Consume());
-            var lexerbm = lexer;
+            var bookmark = lexer;
 
             foreach (var grammar in children)
             {
-                lexer.Reset(lexerbm);
+                lexer.Reset(bookmark);
 
                 bool ok = grammar.Parse(ref lexer, out Node n);
                 if (ok)

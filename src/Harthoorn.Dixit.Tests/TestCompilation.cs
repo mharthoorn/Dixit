@@ -70,16 +70,6 @@ namespace Harthoorn.Dixit.Tests
             Assert.False(success);
             // the optional where clause should still fail the whole.
             // it should not end with "unexpected characters at end of statement "where id =..."
-
-
-            //var fields = node.Descend(FQL.Statement, FQL.WhereClause, FQL.FieldName).ToList();
-            //Assert.True(fields[0].Text == "id");
-            //Assert.True(fields[1].Text == "name");
-
-            //var values = node.Descend(FQL.Statement, FQL.WhereClause, FQL.StringValue).ToList();
-            //Assert.True(fields[0].Text == "4");
-            //Assert.False(fields[1].Text == "John");
-
         }
     }
 }
