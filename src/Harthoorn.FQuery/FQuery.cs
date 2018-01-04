@@ -1,6 +1,8 @@
-﻿namespace Harthoorn.Dixit.Sql
-{
-    public static class SQL 
+﻿using Harthoorn.Dixit;
+
+namespace Harthoorn.FQuery
+{ 
+    public static class FQL
     {
         public static Language Language;
 
@@ -13,7 +15,7 @@
             BooleanOp, BooleanExpression, BracketsExpression, Expression,
             WhereClause, Statement, OptionalWhereClause;
 
-        static SQL()
+        static FQL()
         {
             Language = new Language();
 

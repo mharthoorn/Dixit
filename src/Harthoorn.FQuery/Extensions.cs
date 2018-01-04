@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using Harthoorn.Dixit;
+using System.Collections.Generic;
 
-namespace Harthoorn.Dixit.Sql
+namespace Harthoorn.FQuery
 {
     public static class Extensions
     {

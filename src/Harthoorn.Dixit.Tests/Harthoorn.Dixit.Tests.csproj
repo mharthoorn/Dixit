@@ -15,7 +15,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Harthoorn.Dixit\Harthoorn.Dixit.csproj" />
-    <ProjectReference Include="..\Harthoorn.Dixit.Sql\Harthoorn.Dixit.Sql.csproj" />
+    <ProjectReference Include="..\Harthoorn.FQuery\Harthoorn.FQuery.csproj" />
+
   </ItemGroup>
 
 </Project>

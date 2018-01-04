@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using Harthoorn.Dixit;
-using Harthoorn.Dixit.Sql;
+using Harthoorn.FQuery;
 using System.Linq;
 
 namespace SpanTest
@@ -29,7 +29,7 @@ namespace SpanTest
             Console.WriteLine("Query:\n" + text);
             Console.WriteLine();
 
-            var compiler = new SqlCompiler();
+            var compiler = new FQueryCompiler();
             (var ast, var success) = compiler.Compile(text);
 
             if (success)

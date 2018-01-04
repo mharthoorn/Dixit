@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 
-namespace Harthoorn.Dixit.Sql
-{
+namespace Harthoorn.FQuery
+{ 
     public class Query
     {
         public List<string> Fields;

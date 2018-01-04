@@ -1,13 +1,13 @@
 using System;
 using Xunit;
-using Harthoorn.Dixit.Sql;
+using Harthoorn.FQuery;
 using System.Linq;
 
 namespace Harthoorn.Dixit.Tests
 {
     public class TestCompilation
     {
-        SqlCompiler compiler = new SqlCompiler();
+        FQueryCompiler compiler = new FQueryCompiler();
 
         
         [Fact]
@@ -16,7 +16,7 @@ namespace Harthoorn.Dixit.Tests
             string s = "select * from users";
             (Node node, bool success) = compiler.Compile(s);
             Assert.True(success);
-            var fields = node.Descend(SQL.Statement, SQL.FieldList, SQL.Wildcard).ToList();
+            var fields = node.Descend(FQL.Statement, FQL.FieldList, FQL.Wildcard).ToList();
             Assert.True(fields[0].Text == "*");
         }
 
@@ -26,7 +26,7 @@ namespace Harthoorn.Dixit.Tests
             string s = "select aap, noot, mies from users ";
             (Node node, bool success) = compiler.Compile(s);
             Assert.True(success);
-            var fields = node.Descend(SQL.Statement, SQL.FieldList, SQL.FieldName).ToList();
+            var fields = node.Descend(FQL.Statement, FQL.FieldList, FQL.FieldName).ToList();
             Assert.True(fields[0].Text == "aap");
             Assert.True(fields[1].Text == "noot");
             Assert.True(fields[2].Text == "mies");
@@ -39,11 +39,11 @@ namespace Harthoorn.Dixit.Tests
             (Node node, bool success) = compiler.Compile(s);
             Assert.True(success);
 
-            var fields = node.Descend(SQL.Statement, SQL.WhereClause, SQL.FieldName).ToList();
+            var fields = node.Descend(FQL.Statement, FQL.WhereClause, FQL.FieldName).ToList();
             Assert.True(fields[0].Text == "id");
             Assert.True(fields[1].Text == "name");
 
-            var values = node.Descend(SQL.Statement, SQL.WhereClause, SQL.StringValue).ToList();
+            var values = node.Descend(FQL.Statement, FQL.WhereClause, FQL.StringValue).ToList();
             Assert.True(values[0].Text == "4");
             Assert.True(values[1].Text == "John");
         }
@@ -59,11 +59,11 @@ namespace Harthoorn.Dixit.Tests
             // it should not end with "unexpected characters at end of statement "where id =..."
 
 
-            //var fields = node.Descend(SQL.Statement, SQL.WhereClause, SQL.FieldName).ToList();
+            //var fields = node.Descend(FQL.Statement, FQL.WhereClause, FQL.FieldName).ToList();
             //Assert.True(fields[0].Text == "id");
             //Assert.True(fields[1].Text == "name");
 
-            //var values = node.Descend(SQL.Statement, SQL.WhereClause, SQL.StringValue).ToList();
+            //var values = node.Descend(FQL.Statement, FQL.WhereClause, FQL.StringValue).ToList();
             //Assert.True(fields[0].Text == "4");
             //Assert.False(fields[1].Text == "John");
 
