@@ -10,7 +10,7 @@ namespace Harthoorn.FQuery
            keyword, identifier;
 
         public static IGrammar
-            Whitespace, Wildcard, FieldName, Comma, StringValue,
+            Whitespace, Wildcard, Projection, FieldName, Value, Object, FieldExpression, Comma,StringValue,
             Field, EqualityOp, FieldList, FromClause, EqualityExpression,
             BooleanOp, BooleanExpression, BracketsExpression, Expression,
             WhereClause, Statement, OptionalWhereClause;
@@ -28,10 +28,14 @@ namespace Harthoorn.FQuery
 
             Comma = Language.Literal("Comma", ",");
             Field = Language.Any("Field");
+            Value = Language.Any("Value");
+            Object = Language.Sequence("JsonObject");
+            Projection = Language.Sequence("Projection");
 
             StringValue = Language.Delimit("string", '\'', '\'', '\\');
             EqualityOp = Language.Any("EqualityOperator");
             FieldList = Language.Interlace("FieldList", ",");
+            FieldExpression = Language.Syntax("FieldExpression", new FieldExpressionSyntax());
             FromClause = Language.Sequence("FromClause");
             EqualityExpression = Language.Sequence("Equation");
             BooleanOp = Language.Any("BooleanOperator");
@@ -43,8 +47,17 @@ namespace Harthoorn.FQuery
 
             OptionalWhereClause = Language.Optional("OptionalWhereClause");
 
+            Value
+                .Define(Object, FieldExpression);
+
+            Projection
+                .Define(FieldName, ":", Value);
+
+            Object
+                .Define("{", FieldList, "}");
+
             Field
-                .Define(FieldName, Wildcard);
+                .Define(Projection, FieldName, Wildcard);
 
             EqualityOp
                 .Define("=", "!=", "<", ">");

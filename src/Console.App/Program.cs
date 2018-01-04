@@ -30,7 +30,7 @@ namespace SpanTest
             Console.WriteLine();
 
             var compiler = new FQueryCompiler();
-            (var ast, var success) = compiler.Compile(text);
+            var success = compiler.Compile(text, out Node ast);
 
             if (success)
             {

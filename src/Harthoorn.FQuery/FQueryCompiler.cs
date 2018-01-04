@@ -8,12 +8,18 @@ namespace Harthoorn.FQuery
     public class FQueryCompiler
     {
 
-        public (Node, bool) Compile(string text)
+        public bool Compile(string text, out Node node)
         {
             var file = new MemoryFile(text);
             var compiler = new Compiler(FQL.Language);
-            var success = compiler.Parse(file, out Node root);
-            return (root, success);
+            var success = compiler.Parse(file, out node);
+            return success;
+        }
+
+        public (bool success, Node ast) Compile(string text)
+        {
+            var success = Compile(text, out Node ast);
+            return (success, ast);
         }
 
         public Query GetQuery(Node node)

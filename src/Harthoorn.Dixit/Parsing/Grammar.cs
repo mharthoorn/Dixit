@@ -24,6 +24,8 @@ namespace Harthoorn.Dixit
 
         public static IGrammar Define(this IGrammar grammar, params object[] items)
         {
+            if (grammar is null) throw new NullReferenceException("Define failed. Grammar is null");
+
             var list = Grammarize(items);
             switch (grammar)
             {
