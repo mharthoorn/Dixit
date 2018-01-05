@@ -8,6 +8,7 @@ namespace SpanTest
 {
     class Program
     {
+
         public static void DumpAst(Node root)
         {
             Console.WriteLine();
@@ -50,29 +51,37 @@ namespace SpanTest
             }
         }
 
+        static bool TryGetFileText(string path, out string text)
+        {
+            if (!Path.HasExtension(path)) path = Path.ChangeExtension(path, "sql");
+
+            if (File.Exists(path))
+            {
+                Console.WriteLine($"Input file: {path}");
+                text = File.ReadAllText(path);
+                return true;
+            }
+            else
+            {
+                Console.WriteLine($"File not found: {path}");
+                text = null;
+                return false;
+            }
+        }
+
         static void Main(string[] args)
         {
-            if (args.Length > 0) 
+            if (args.Length == 0)
             {
-                string path = args[0];
-                if (!Path.HasExtension(path)) path = Path.ChangeExtension(path, "sql");
-                
-                if (File.Exists(path)) 
-                { 
-                    Console.WriteLine($"Input file: {path}");
-                    string text = File.ReadAllText(path);
-                    Compile(text);
-                }
-                else 
-                {
-                    Console.WriteLine($"File not found: {path}");
-                }
+                Console.WriteLine("You need to provide a filename.");
+                return;
             }
-            else 
+            
+            if (TryGetFileText(args[0], out string text))
             {
-                Console.WriteLine("File parameter missing.");
+                Compile(text);
             }
-
+          
             if (args.Contains("-wait"))
             {
                 Console.Write("Press any key...");
