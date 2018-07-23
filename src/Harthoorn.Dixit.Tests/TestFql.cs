@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Harthoorn.Dixit.Tests
 {
-    public class TestCompilation
+    public class TestFql
     {
         FQueryCompiler compiler = new FQueryCompiler();
 
@@ -16,7 +16,7 @@ namespace Harthoorn.Dixit.Tests
             string s = "select * from users";
             bool success = compiler.Compile(s, out Node node);
             Assert.True(success);
-            var fields = node.Descend(FQL.Statement, FQL.FieldList, FQL.Wildcard).ToList();
+            var fields = node.DeepSelect(FQL.Statement, FQL.FieldList, FQL.Wildcard).ToList();
             Assert.True(fields[0].Text == "*");
         }
 
@@ -26,7 +26,7 @@ namespace Harthoorn.Dixit.Tests
             string s = "select aap, noot, mies from users ";
             bool success = compiler.Compile(s, out Node node);
             Assert.True(success);
-            var fields = node.Descend(FQL.Statement, FQL.FieldList, FQL.FieldName).ToList();
+            var fields = node.DeepSelect(FQL.Statement, FQL.FieldList, FQL.FieldName).ToList();
             Assert.True(fields[0].Text == "aap");
             Assert.True(fields[1].Text == "noot");
             Assert.True(fields[2].Text == "mies");
@@ -39,11 +39,11 @@ namespace Harthoorn.Dixit.Tests
             bool success = compiler.Compile(s, out Node node);
             Assert.True(success);
 
-            var fields = node.Descend(FQL.Statement, FQL.WhereClause, FQL.FieldName).ToList();
+            var fields = node.DeepSelect(FQL.Statement, FQL.WhereClause, FQL.FieldName).ToList();
             Assert.True(fields[0].Text == "id");
             Assert.True(fields[1].Text == "name");
 
-            var values = node.Descend(FQL.Statement, FQL.WhereClause, FQL.StringValue).ToList();
+            var values = node.DeepSelect(FQL.Statement, FQL.WhereClause, FQL.StringValue).ToList();
             Assert.True(values[0].Text == "4");
             Assert.True(values[1].Text == "John");
         }
@@ -87,14 +87,14 @@ namespace Harthoorn.Dixit.Tests
             (bool success, Node node) = compiler.Compile(query);
             Assert.True(success);
 
-            var fields = node.Descend(FQL.Statement, FQL.FieldList, FQL.FieldName).ToList();
+            var fields = node.DeepSelect(FQL.Statement, FQL.FieldList, FQL.FieldName).ToList();
             Assert.True(fields[0].Text == "field1");
             Assert.True(fields[1].Text == "field2");
             Assert.True(fields[2].Text == "field3");
             Assert.True(fields[3].Text == "field4");
 
 
-            var expressions = node.Descend(FQL.Statement, FQL.FieldList, FQL.Projection, FQL.FieldExpression).ToList();
+            var expressions = node.DeepSelect(FQL.Statement, FQL.FieldList, FQL.Projection, FQL.FieldExpression).ToList();
             Assert.True(expressions[0].Text == "'value1'");
             Assert.True(expressions[1].Text == "statement1");
             Assert.True(expressions[2].Text == "statement2");
@@ -102,40 +102,34 @@ namespace Harthoorn.Dixit.Tests
         }
 
         [Fact]
-        public void JsonStructures()
+        public void CombinedFqlFhirPath()
         {
             string query = @"
                 select
-                    field1 : { 
-                        subfield1 : 'value1',
-                        subfield2 : statement1,
-                        subfield3 : 'value2'
-                    }, 
-                    field2 : statement2
+                    Patient: {
+                        name : 'John',
+                        family: 'Williams',
+                        given: Patient.given
+                    }
                 from
-                    Table
+                    Patient
             ";
             (bool success, Node node) = compiler.Compile(query);
             Assert.True(success);
 
-            var fields = node.Descend(FQL.Statement, FQL.FieldList, FQL.Field).ToList();
-            var fieldnames = fields.Direct(FQL.FieldName).ToList();
-            Assert.True(fieldnames[0].Text == "field1");
-            Assert.True(fieldnames[1].Text == "field2");
+            var fields = node.DeepSelect(FQL.Statement, FQL.FieldList, FQL.Field).ToList();
 
-            var subfields = node.Descend(FQL.Statement, FQL.FieldList, FQL.FieldName).ToList();
-            Assert.True(subfields[0].Text == "subfield1");
-            Assert.True(subfields[1].Text == "subfield2");
-            Assert.True(subfields[2].Text == "subfield2");
+            Assert.True(fields.Count() == 1);
+            var name = fields[0].PathSelect(FQL.Projection, FQL.FieldName).ToList();
+            Assert.True(name[0].Text == "Patient");
 
-
-
-            var expressions = node.Descend(FQL.Statement, FQL.FieldList, FQL.Projection, FQL.FieldExpression).ToList();
+            var expressions = fields.PathSelect(FQL.FieldList, FQL.Projection, FQL.FieldExpression).ToList();
             Assert.True(expressions[0].Text == "'value1'");
             Assert.True(expressions[1].Text == "statement1");
             Assert.True(expressions[2].Text == "statement2");
 
         }
+
 
     }
 }

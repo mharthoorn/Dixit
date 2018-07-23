@@ -24,14 +24,14 @@ namespace Harthoorn.FQuery
 
         public Query GetQuery(Node node)
         {
-            var nodes = node.Descend(FQL.WhereClause, FQL.BooleanExpression, FQL.EqualityExpression).ToList();
+            var nodes = node.DeepSelect(FQL.WhereClause, FQL.BooleanExpression, FQL.EqualityExpression).ToList();
             var dict = nodes.ToFilters();
 
             return new Query
             {
-                Fields = node.Descend(FQL.Statement, FQL.FieldList, FQL.Field, FQL.FieldName).Values().ToList(),
-                Resource = node.Descend(FQL.FromClause, FQL.FieldName).Values().FirstOrDefault(),
-                Where = node.Descend(FQL.WhereClause, FQL.BooleanExpression, FQL.EqualityExpression).ToFilters().ToList()
+                Fields = node.DeepSelect(FQL.Statement, FQL.FieldList, FQL.Field, FQL.FieldName).Values().ToList(),
+                Resource = node.DeepSelect(FQL.FromClause, FQL.FieldName).Values().FirstOrDefault(),
+                Where = node.DeepSelect(FQL.WhereClause, FQL.BooleanExpression, FQL.EqualityExpression).ToFilters().ToList()
             };
         }
 
