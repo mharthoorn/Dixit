@@ -16,6 +16,11 @@ namespace Harthoorn.Dixit
             return node.Find(n => n.Grammar.Name == grammar.Name);
         }
 
+        public static Node First(this Node node)
+        {
+            return node.Children?.First();
+        }
+
         public static IEnumerable<Node> DeepSelect(this Node node, IGrammar grammar)
         {
             return node.DeepSelect(n => n.Grammar.Name == grammar.Name);
@@ -92,7 +97,7 @@ namespace Harthoorn.Dixit
         }
 
 
-        public static IEnumerable<Node> Select(this Node node, IGrammar grammar)
+        public static IEnumerable<Node> RecursiveSelect(this Node node, IGrammar grammar)
         {
             return node.RecursiveSelect(n => n.Grammar.Name == grammar.Name);
         }

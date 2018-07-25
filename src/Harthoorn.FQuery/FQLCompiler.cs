@@ -5,7 +5,7 @@ using Harthoorn.Dixit;
 namespace Harthoorn.FQuery
 {
 
-    public class FQueryCompiler
+    public class FQLCompiler
     {
 
         public bool Compile(string text, out Node node)
@@ -22,7 +22,7 @@ namespace Harthoorn.FQuery
             return (success, ast);
         }
 
-        public Query GetQuery(Node node)
+        public Query ConstructQuery(Node node)
         {
             var nodes = node.DeepSelect(FQL.WhereClause, FQL.BooleanExpression, FQL.EqualityExpression).ToList();
             var dict = nodes.ToFilters();

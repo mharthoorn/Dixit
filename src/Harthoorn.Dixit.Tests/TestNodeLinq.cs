@@ -6,7 +6,7 @@ namespace Harthoorn.Dixit.Tests
 {
     public class TestNodeLinq
     {
-        FQueryCompiler compiler = new FQueryCompiler();
+        FQLCompiler compiler = new FQLCompiler();
 
         [Fact]
         public void PathSelecting()

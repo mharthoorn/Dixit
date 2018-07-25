@@ -7,7 +7,7 @@ namespace Harthoorn.Dixit.Tests
 {
     public class TestFql
     {
-        FQueryCompiler compiler = new FQueryCompiler();
+        FQLCompiler compiler = new FQLCompiler();
 
 
         [Fact]

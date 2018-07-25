@@ -57,7 +57,7 @@ namespace Harthoorn.FQuery
                 .Define("{", FieldList, "}");
 
             Field
-                .Define(Projection, FieldName, Wildcard);
+                .Define(Projection, FieldExpression, Wildcard);
 
             EqualityOp
                 .Define("=", "!=", "<", ">");

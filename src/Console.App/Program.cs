@@ -3,11 +3,72 @@ using System.IO;
 using Harthoorn.Dixit;
 using Harthoorn.FQuery;
 using System.Linq;
+using System.Text;
+using System.Collections.Generic;
 
 namespace SpanTest
 {
     class Program
     {
+
+        public static string Project(Node node)
+        {
+            var b = new StringBuilder();
+            
+            visit(node);
+
+            return b.ToString();
+
+            void visitall(IEnumerable<Node> nodes)
+            {
+                if (nodes == null) return;
+
+                foreach (var n in nodes)
+                {
+                    visit(n);
+                }
+            }
+
+            void fieldlist(IEnumerable<Node> nodes)
+            {
+                if (nodes == null) return;
+                var first = true;
+
+                foreach (var n in nodes)
+                {
+                    if (!first) b.Append(",\n");
+                    first = false;
+                    visit(n);
+                }
+            }
+
+            void visit(Node n) 
+            { 
+                if (n.Grammar == FQL.FieldName)
+                {
+                    b.Append(n.Text + ": ");
+                }
+                else if (n.Grammar == FQL.FieldExpression)
+                {
+                    b.Append(n.Text);
+                }
+                else if (n.Grammar == FQL.Object)
+                {
+                    b.Append("{\n");
+                    visitall(n.Children);
+                    b.Append("\n}");
+                }
+                else if (n.Grammar == FQL.FieldList)
+                {
+                    fieldlist(n.Children);
+                }
+                else
+                {
+                    visitall(n.Children);
+                }
+            }
+
+        }
 
         public static void DumpAst(Node root)
         {
@@ -27,21 +88,25 @@ namespace SpanTest
 
         public static void Compile(string text)
         {
-            Console.WriteLine("Query:\n" + text);
+            //Console.WriteLine("Query:\n" + text);
             Console.WriteLine();
 
-            var compiler = new FQueryCompiler();
+            var compiler = new FQLCompiler();
             var success = compiler.Compile(text, out Node ast);
 
             if (success)
             {
                 Console.WriteLine("Compilation succeeded.");
-                DumpAst(ast);
+                //DumpAst(ast);
+                var fieldlist = ast.Find(FQL.FieldList);
+                var result = Project(fieldlist);
 
-                var query = compiler.GetQuery(ast);
-                Console.WriteLine($"Query.Fields: {string.Join(", ", query.Fields)}");
-                Console.WriteLine($"Query.Resource: {string.Join(", ", query.Resource)}");
-                Console.WriteLine($"Where: " + string.Join(", ", query.Where.Select(f => $"({f.Name} {f.Operator} {f.Value})")));
+                Console.WriteLine(result);
+
+                //var query = compiler.ConstructQuery(ast);
+                //Console.WriteLine($"Query.Fields: {string.Join(", ", query.Fields)}");
+                //Console.WriteLine($"Query.Resource: {string.Join(", ", query.Resource)}");
+                //Console.WriteLine($"Where: " + string.Join(", ", query.Where.Select(f => $"({f.Name} {f.Operator} {f.Value})")));
             }
             else 
             {
