@@ -1,1 +1,1 @@
-select * from Patient
+select name, age from Patient

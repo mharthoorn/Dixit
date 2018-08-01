@@ -35,7 +35,7 @@ namespace Harthoorn.FQuery
             StringValue = Language.Delimit("string", '\'', '\'', '\\');
             EqualityOp = Language.Any("EqualityOperator");
             FieldList = Language.Interlace("FieldList", ",");
-            FieldExpression = Language.Syntax("FieldExpression", new FieldExpressionSyntax());
+            FieldExpression = Language.Interlace("FieldExpression", ".");
             FromClause = Language.Sequence("FromClause");
             EqualityExpression = Language.Sequence("Equation");
             BooleanOp = Language.Any("BooleanOperator");
@@ -58,6 +58,9 @@ namespace Harthoorn.FQuery
 
             Field
                 .Define(Projection, FieldExpression, Wildcard);
+
+            FieldExpression
+                .Define(identifier);
 
             EqualityOp
                 .Define("=", "!=", "<", ">");

@@ -86,9 +86,16 @@ namespace SpanTest
             foreach(var e in ast.GetErrors()) Console.WriteLine($"Error: Found {e.Token}. Expected: {e.Syntax}");
         }
 
+        public static void DumpQuery(Query query)
+        {
+            Console.WriteLine($"Query.Fields: {string.Join(", ", query.Fields)}");
+            Console.WriteLine($"Query.Resource: {string.Join(", ", query.Resource)}");
+            Console.WriteLine($"Where: " + string.Join(", ", query.Where.Select(f => $"({f.Name} {f.Operator} {f.Value})")));
+        }
+
         public static void Compile(string text)
         {
-            //Console.WriteLine("Query:\n" + text);
+            Console.WriteLine("Query:\n" + text);
             Console.WriteLine();
 
             var compiler = new FQLCompiler();
@@ -98,15 +105,14 @@ namespace SpanTest
             {
                 Console.WriteLine("Compilation succeeded.");
                 //DumpAst(ast);
+                var query = compiler.ConstructQuery(ast);
+                DumpQuery(query);
                 var fieldlist = ast.Find(FQL.FieldList);
                 var result = Project(fieldlist);
-
                 Console.WriteLine(result);
 
-                //var query = compiler.ConstructQuery(ast);
-                //Console.WriteLine($"Query.Fields: {string.Join(", ", query.Fields)}");
-                //Console.WriteLine($"Query.Resource: {string.Join(", ", query.Resource)}");
-                //Console.WriteLine($"Where: " + string.Join(", ", query.Where.Select(f => $"({f.Name} {f.Operator} {f.Value})")));
+
+
             }
             else 
             {
