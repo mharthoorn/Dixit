@@ -1,1 +1,0 @@
-select * from Patient where yadayada

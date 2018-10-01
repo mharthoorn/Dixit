@@ -1,1 +1,0 @@
-select name, age from Patient
