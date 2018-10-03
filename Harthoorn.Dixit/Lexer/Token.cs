@@ -4,8 +4,6 @@ namespace Harthoorn.Dixit
 {
     public struct Token
     {
-        // will be a span
-        
         public ISourceFile File;
         public int Start;
         public int End;

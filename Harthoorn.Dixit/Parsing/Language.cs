@@ -32,7 +32,7 @@ namespace Harthoorn.Dixit
         {
             this.RootGrammar = root;
             this.Program = new Sequence("Program", WhiteSpace);
-            var finish = new Finish();
+            var finish = new EOF();
             Program.Define(root, finish);
         }
     }
