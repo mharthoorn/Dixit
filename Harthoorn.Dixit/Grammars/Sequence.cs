@@ -9,6 +9,8 @@ namespace Harthoorn.Dixit
         List<IGrammar> list;
         ISyntax whitespace;
 
+        public bool ExpectingConcept { get; } = false;
+
         public Sequence(string name, ISyntax whitespace)
         {
             this.Name = name;
@@ -36,7 +38,11 @@ namespace Harthoorn.Dixit
 
                 bool ok = grammar.Parse(ref lexer, out Node n);
                 node.Append(n);
-                if (!ok) return false;
+                if (!ok)
+                {
+                    node.State = State.Invalid;
+                    return false;
+                }
             }
 
             return true;

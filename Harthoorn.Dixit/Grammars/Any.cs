@@ -8,6 +8,7 @@ namespace Harthoorn.Dixit
         public string Name { get; }
         IList<IGrammar> children { get; set; }
         ISyntax whitespace;
+        public bool ExpectingConcept { get; } = true;
 
         public Any(string name, ISyntax whitespace)
         {
@@ -47,6 +48,7 @@ namespace Harthoorn.Dixit
                 }
             }
 
+            failure.State = State.Error;
             node.Append(failure);
             return false;
                 

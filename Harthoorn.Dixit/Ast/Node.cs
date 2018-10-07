@@ -10,10 +10,14 @@ namespace Harthoorn.Dixit
         public ISyntax Syntax;
         public Token Token;
         public State State;
+        public Node Parent;
         public List<Node> Children;
 
         public string Text => Token.Text;
-        
+
+        public int Start => Token.Start;
+        public int End => Token.End;
+        public int Length => Token.Length;
 
         public Node this[int index] => Children[index];
 
@@ -52,12 +56,13 @@ namespace Harthoorn.Dixit
             if (node != null)
             {
                 Children.Add(node);
-                this.Expand(node);
+                node.Parent = this;
+                this.TokenExpand(node);
                 if (node.State != State.Valid) this.State = State.Invalid;
             }
         }
 
-        public void Expand(Node node)
+        public void TokenExpand(Node node)
         {
             this.Token.Expand(node.Token);
         }

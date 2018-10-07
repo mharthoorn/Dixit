@@ -10,5 +10,7 @@
             node = Nodes.Create(this, null, token);
             return token.IsValid;
         }
+
+        public bool ExpectingConcept { get; } = false;
     }
 }

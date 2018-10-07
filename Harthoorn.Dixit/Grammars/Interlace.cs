@@ -7,6 +7,8 @@ namespace Harthoorn.Dixit
         ISyntax whitespace;
         ISyntax glue;
 
+        public bool ExpectingConcept { get; } = false;
+
         public Interlace(string name, ISyntax glue, ISyntax whitespace)
         {
             this.Name = name;

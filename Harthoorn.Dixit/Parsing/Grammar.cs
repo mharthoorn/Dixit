@@ -12,7 +12,7 @@ namespace Harthoorn.Dixit
             {
                 case IGrammar g: return g;
                 case ISyntax syntax: return new Syntax(syntax.GetType().Name, syntax);
-                case string s: return new Syntax("Literal", new Literal(s));
+                case string s: return new Syntax(s, new Literal(s));
                 default: return null;
             }
         }

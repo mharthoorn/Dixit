@@ -15,9 +15,20 @@ namespace Harthoorn.Dixit
             return node;
         }
 
-        public static IEnumerable<Node> GetErrors(this Node root)
+        public static Node GetExpect(this Node node)
         {
-            return root.Descendants().Where(n => n.State == State.Error);
+            var error = node.GetError();
+            if (error is null) return null;
+
+            var expect = error;
+            while (expect.Grammar.ExpectingConcept == false && expect.Parent != null) expect = expect.Parent;
+            return expect;
+        }
+
+        public static Node GetError(this Node root)
+        {
+            var errors = root.Descendants().Where(n => n.State == State.Error);
+            return errors.Longest();
         }
 
         public static IEnumerable<Node> Descendants(this Node node)
@@ -41,21 +52,17 @@ namespace Harthoorn.Dixit
             return node;
         }
 
-        public static int Length(this Node node)
-        {
-            return node.Token.Length;
-        }
-
         public static Node Longest(this IEnumerable<Node> nodes)
         {
             Node longest = null; int max = 0;
             foreach(var node in nodes)
             {
-                var len = node?.Length() ?? 0;
-                if (len > max)
+                
+                var end = node?.End ?? 0;
+                if (end > max)
                 {
                     longest = node;
-                    max = len;
+                    max = end;
                 }
             }
             return longest;
