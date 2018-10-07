@@ -6,7 +6,7 @@ namespace Harthoorn.Dixit
     public class Any : IGrammar
     {
         public string Name { get; }
-        IList<IGrammar> children { get; set; }
+        IList<IGrammar> Children { get; set; }
         ISyntax whitespace;
         public bool ExpectingConcept { get; } = true;
 
@@ -14,12 +14,12 @@ namespace Harthoorn.Dixit
         {
             this.Name = name;
             this.whitespace = whitespace;
-            children = new List<IGrammar>();
+            Children = new List<IGrammar>();
         }
          
         public IGrammar Define(IEnumerable<IGrammar> grammars)
         {
-            this.children = grammars.ToList();
+            this.Children = grammars.ToList();
             return this;
         }
 
@@ -32,7 +32,7 @@ namespace Harthoorn.Dixit
             node = new Node(this, lexer.Consume());
             var bookmark = lexer;
 
-            foreach (var grammar in children)
+            foreach (var grammar in Children)
             {
                 lexer.Reset(bookmark);
 

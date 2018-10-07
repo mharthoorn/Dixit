@@ -1,5 +1,3 @@
-using System.Linq;
-
 namespace Harthoorn.Dixit
 {
     public class Literal : ISyntax

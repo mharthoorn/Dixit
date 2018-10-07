@@ -1,7 +1,4 @@
-﻿
-using System;
-
-namespace Harthoorn.Dixit
+﻿namespace Harthoorn.Dixit
 {
     public class MemoryFile : ISourceFile
     {
