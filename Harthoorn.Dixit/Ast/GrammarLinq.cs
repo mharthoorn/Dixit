@@ -15,7 +15,7 @@ namespace Harthoorn.Dixit
             return node.Find(n => n.Grammar.Name == grammar.Name);
         }
 
-        public static Node First(this Node node)
+        public static Node FirstChild(this Node node)
         {
             return node.Children?.First();
         }
