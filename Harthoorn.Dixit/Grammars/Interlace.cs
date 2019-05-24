@@ -7,18 +7,12 @@ namespace Harthoorn.Dixit
         ISyntax whitespace;
         ISyntax glue;
 
-        public bool ExpectingConcept { get; } = false;
-
-        public Interlace(string name, ISyntax glue, ISyntax whitespace)
+        public Interlace(string name, ISyntax glue, IGrammar item, ISyntax whitespace)
         {
             this.Name = name;
             this.whitespace = whitespace;
-            this.glue = glue;
-        }
-
-        public void Define(IGrammar item)
-        {
             this.item = item;
+            this.glue = glue;
         }
 
         private bool ParseGlue(ref Lexer lexer)
@@ -71,28 +65,6 @@ namespace Harthoorn.Dixit
         public override string ToString()
         {
             return $"{Name} ({nameof(Interlace)})";
-        }
-    }
-
-    public class Concept : IGrammar
-    {
-        public string Name { get; }
-
-        internal Language Language;
-
-        public Concept(Language language, string name)
-        {
-            this.Name = name;
-            this.Language = language;
-        }
-
-        public IGrammar Grammar { get; internal set; }
-
-        public bool ExpectingConcept { get; } = true;
-
-        public bool Parse(ref Lexer lexer, out Node node)
-        {
-            return this.Grammar.Parse(ref lexer, out node);
         }
     }
 }

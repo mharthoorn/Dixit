@@ -5,13 +5,10 @@ namespace Harthoorn.Dixit
         public string Name { get; }
         ISyntax syntax;
 
-        public bool ExpectingConcept { get; } = false;
-
-        public Syntax(string name, ISyntax syntax, bool expectation = false)
+        public Syntax(string name, ISyntax syntax)
         {
             this.Name = name;
             this.syntax = syntax;
-            this.ExpectingConcept = ExpectingConcept;
         }
 
         public bool Parse(ref Lexer lexer, out Node node)

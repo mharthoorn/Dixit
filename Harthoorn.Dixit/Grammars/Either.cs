@@ -3,27 +3,20 @@ using System.Linq;
 
 namespace Harthoorn.Dixit
 {
-    public class Any : IGrammar
+    public class Either : IGrammar
     {
         public string Name { get; }
         IList<IGrammar> Children { get; set; }
         ISyntax whitespace;
-        public bool ExpectingConcept { get; } = true;
 
-        public Any(string name, ISyntax whitespace)
+        public Either(string name, ISyntax whitespace, IEnumerable<IGrammar> grammars)
         {
             this.Name = name;
             this.whitespace = whitespace;
-            Children = new List<IGrammar>();
+            Children = grammars.ToList();
         }
          
-        public IGrammar Define(IEnumerable<IGrammar> grammars)
-        {
-            this.Children = grammars.ToList();
-            return this;
-        }
-
-
+        
         public bool Parse(ref Lexer lexer, out Node node)
         {
             whitespace.Parse(ref lexer); // consume whitespace.
@@ -56,7 +49,7 @@ namespace Harthoorn.Dixit
 
         public override string ToString()
         {
-            return $"{Name} ({nameof(Any)})";
+            return $"{Name} ({nameof(Either)})";
         }
 
        

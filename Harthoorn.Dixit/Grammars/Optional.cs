@@ -6,8 +6,6 @@ namespace Harthoorn.Dixit
         public string Name {get;}
         IGrammar grammar;
 
-        public bool ExpectingConcept { get; } = false;
-
         public Optional(string name, IGrammar grammar)
         {
             this.Name = name;

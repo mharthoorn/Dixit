@@ -6,22 +6,22 @@ namespace Harthoorn.Dixit
     {
         public Concept Grammar { get; private set; }
         public ISyntax WhiteSpace { get; set; }
-        List<IGrammar> concepts;
+        List<IGrammar> elements;
         
 
         public Language()
         {
-            concepts = new List<IGrammar>();
+            elements = new List<IGrammar>();
         }
 
         public void Add(IGrammar grammar)
         {
-            concepts.Add(grammar);
+            elements.Add(grammar);
         }
 
         public void DefineGrammar(IGrammar program)
         {
-            this.Grammar = new Concept(this, "Compilation");
+            this.Grammar = new Concept(this, "Grammar");
             var eof = new EOF();
             Grammar.Sequence(program, eof);
 

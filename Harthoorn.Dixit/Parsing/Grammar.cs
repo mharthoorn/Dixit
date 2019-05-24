@@ -38,19 +38,19 @@ namespace Harthoorn.Dixit
         //}
 
 
-        public static Any Any(this Concept concept, params object[] words)
+        public static Either Either(this Concept concept, params object[] words)
         {
             var grammars = Grammarize(words);
-            var any = new Any(concept.Name+"-any", concept.Language.WhiteSpace);
-            any.Define(grammars);
-            concept.Grammar = any;
-            return any;
+            var either = new Either(concept.Name+"-either", concept.Language.WhiteSpace, grammars);
+            concept.Grammar = either;
+            return either;
         }
 
         public static Sequence Sequence(this Concept concept, params object[] words)
         {
             var grammars = Grammarize(words);
-            var sequence = new Sequence(concept.Name, concept.Language.WhiteSpace, grammars);
+            var sequence = new Sequence(concept.Name+"-sequence", concept.Language.WhiteSpace, grammars);
+            concept.Grammar = sequence;
             return sequence;
         }
 
@@ -70,11 +70,12 @@ namespace Harthoorn.Dixit
             return grammar;
         }
 
-        public static void Interlace(this Concept concept, string glue, IGrammar grammar)
+        public static Concept Interlace(this Concept concept, string glue, IGrammar grammar)
         {
             var glueSyntax = new Literal(glue);
-            var interlace = new Interlace(concept.Name+"-interlace", glueSyntax, concept.Language.WhiteSpace);
+            var interlace = new Interlace(concept.Name+"-interlace", glueSyntax, grammar, concept.Language.WhiteSpace);
             concept.Grammar = interlace;
+            return concept;
         }
 
         public static IGrammar Literal(this Language language, string name, string literal)

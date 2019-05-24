@@ -11,6 +11,9 @@
             return token.IsValid;
         }
 
-        public bool ExpectingConcept { get; } = false;
+        public override string ToString()
+        {
+            return "EOF";
+        }
     }
 }
