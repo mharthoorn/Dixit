@@ -21,7 +21,7 @@ namespace Harthoorn.Dixit
             if (error is null) return null;
 
             var expect = error;
-            while (expect.Grammar.ExpectingConcept == false && expect.Parent != null) expect = expect.Parent;
+            while ( !(expect.Grammar is Concept) && expect.Parent is Node) expect = expect.Parent;
             return expect;
         }
 

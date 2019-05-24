@@ -9,20 +9,12 @@ namespace Harthoorn.Dixit
         List<IGrammar> list;
         ISyntax whitespace;
 
-        public bool ExpectingConcept { get; } = false;
-
-        public Sequence(string name, ISyntax whitespace)
+        public Sequence(string name, ISyntax whitespace, IEnumerable<IGrammar> items)
         {
             this.Name = name;
             this.whitespace = whitespace;
-        }
-
-        public IGrammar Define(IEnumerable<IGrammar> items)
-        {
             this.list = items.ToList();
-            return this;
         }
-
 
         public bool Parse(ref Lexer lexer, out Node node)
         {

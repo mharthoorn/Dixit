@@ -4,7 +4,6 @@ namespace Harthoorn.Dixit
     {
         string Name { get; }
         bool Parse(ref Lexer lexer, out Node node);
-        bool ExpectingConcept { get; }
     }
    
 }

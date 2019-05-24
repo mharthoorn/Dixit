@@ -74,4 +74,25 @@ namespace Harthoorn.Dixit
         }
     }
 
+    public class Concept : IGrammar
+    {
+        public string Name { get; }
+
+        internal Language Language;
+
+        public Concept(Language language, string name)
+        {
+            this.Name = name;
+            this.Language = language;
+        }
+
+        public IGrammar Grammar { get; internal set; }
+
+        public bool ExpectingConcept { get; } = true;
+
+        public bool Parse(ref Lexer lexer, out Node node)
+        {
+            return this.Grammar.Parse(ref lexer, out node);
+        }
+    }
 }

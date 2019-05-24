@@ -22,32 +22,35 @@ namespace Harthoorn.Dixit
             return words.Select(Grammar.Grammarize).Where(g => g != null);
         }
 
-        public static IGrammar Define(this IGrammar grammar, params object[] items)
-        {
-            if (grammar is null) throw new NullReferenceException("Define failed. Grammar is null");
+        //public static IGrammar Range(this IGrammar grammar, params object[] items)
+        //{
+        //    if (grammar is null) throw new NullReferenceException("Define failed. Grammar is null");
 
-            var list = Grammarize(items);
-            switch (grammar)
-            {
-                case Any g: g.Define(list); return g;
-                case Sequence g: g.Define(list); return g;
-                case Optional g: g.Define(list.FirstOrDefault()); return g;
-                case Interlace g: g.Define(list.FirstOrDefault()); return g;
-                default: throw new ArgumentException("Invalid define");
-            }
+        //    var list = Grammarize(items);
+        //    switch (grammar)
+        //    {
+        //        case Any g: g.Define(list); return g;
+        //        case Sequence g: g.Define(list); return g;
+        //        case Optional g: g.Define(list.FirstOrDefault()); return g;
+        //        case Interlace g: g.Define(list.FirstOrDefault()); return g;
+        //        default: throw new ArgumentException("Invalid define");
+        //    }
+        //}
+
+
+        public static Any Any(this Concept concept, params object[] words)
+        {
+            var grammars = Grammarize(words);
+            var any = new Any(concept.Name+"-any", concept.Language.WhiteSpace);
+            any.Define(grammars);
+            concept.Grammar = any;
+            return any;
         }
 
-        public static Any Any(this Language language, string name)
+        public static Sequence Sequence(this Concept concept, params object[] words)
         {
-            var sequence = new Any(name, language.WhiteSpace);
-            language.Add(sequence);
-            return sequence;
-        }
-
-        public static Sequence Sequence(this Language language, string name)
-        {
-            var sequence = new Sequence(name, language.WhiteSpace);
-            language.Add(sequence);
+            var grammars = Grammarize(words);
+            var sequence = new Sequence(concept.Name, concept.Language.WhiteSpace, grammars);
             return sequence;
         }
 
@@ -56,13 +59,6 @@ namespace Harthoorn.Dixit
             var grammar = new Syntax(name, syntax);
             language.Add(grammar);
             return grammar;
-        }
-
-        public static Sequence Define(this Sequence sequence, params object[] words)
-        {
-            var list = words.Select(Grammar.Grammarize).Where(g => g != null);
-            sequence.Define(list);
-            return sequence;
         }
 
         public static IGrammar WhiteSpace(this Language language, params char[] characters)
@@ -74,25 +70,37 @@ namespace Harthoorn.Dixit
             return grammar;
         }
 
-        public static Interlace Interlace(this Language language, string name, ISyntax glue)
-        {
-            var sequence = new Interlace(name, glue, language.WhiteSpace);
-            language.Add(sequence);
-            return sequence;
-        }
-
-        public static Interlace Interlace(this Language language, string name, string glue)
+        public static void Interlace(this Concept concept, string glue, IGrammar grammar)
         {
             var glueSyntax = new Literal(glue);
-            var sequence = new Interlace(name, glueSyntax, language.WhiteSpace);
-            language.Add(sequence);
-            return sequence;
+            var interlace = new Interlace(concept.Name+"-interlace", glueSyntax, concept.Language.WhiteSpace);
+            concept.Grammar = interlace;
         }
 
         public static IGrammar Literal(this Language language, string name, string literal)
         {
             var syntax = new Literal(literal);
             var grammar = new Syntax(name, syntax);
+            language.Add(grammar);
+            return grammar;
+        }
+
+        public static void As(this Concept concept, IGrammar grammar)
+        {
+            concept.Grammar = grammar;
+        }
+
+        public static Concept As(this Concept concept, ISyntax syntax)
+        {
+            var grammar = new Syntax(concept.Name + "-syntax", syntax);
+            concept.Grammar = grammar;
+            return concept;
+        }
+
+
+        public static Concept Define(this Language language, string name)
+        {
+            var grammar = new Concept(language, name);
             language.Add(grammar);
             return grammar;
         }
@@ -105,12 +113,12 @@ namespace Harthoorn.Dixit
             return grammar;
         }
 
-        public static IGrammar Delimit(this Language language, string name, char start, char end, char esc)
+        public static Concept Delimit(this Concept concept, string name, char start, char end, char esc)
         {
             var syntax = new Delimiters(start, end, esc);
             var grammar = new Syntax(name, syntax);
-            language.Add(grammar);
-            return grammar;
+            concept.Grammar = grammar;
+            return concept;
         }
 
         public static IGrammar CharSet(this Language language, string name, params string[] chars)
@@ -126,11 +134,11 @@ namespace Harthoorn.Dixit
             return unit;
         }
 
-        public static Optional Optional(this Language language, string name)
+        public static Concept Optional(this Concept concept, IGrammar grammar)
         {
-            var optional = new Optional(name);
-            language.Add(optional);
-            return optional;
+            var optional = new Optional($"Optional({concept.Name})", grammar);
+            concept.Grammar = optional;
+            return concept;
         }
                 
 

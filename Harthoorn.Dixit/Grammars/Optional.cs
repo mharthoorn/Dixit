@@ -8,17 +8,12 @@ namespace Harthoorn.Dixit
 
         public bool ExpectingConcept { get; } = false;
 
-        public Optional(string name)
+        public Optional(string name, IGrammar grammar)
         {
             this.Name = name;
-        }
-
-        public Optional Define(IGrammar grammar)
-        {
             this.grammar = grammar;
-            return this;
         }
-
+        
         public bool Parse(ref Lexer lexer, out Node node)
         {
             var bookmark = lexer;
