@@ -2,7 +2,17 @@ using System.Collections.Generic;
 
 namespace Harthoorn.Dixit
 {
-    public enum State { Valid, Invalid, Error };
+    public enum State
+    {
+        Valid,      // this node and all sub nodes are valid
+        Dismissed,    // One of the child nodes, contains an error, but this is an optional/either branch.
+        Error       // This node contains an error
+    };
+
+    public static class StateExtensions
+    {
+        
+    }
 
     public class Node
     {
@@ -50,21 +60,28 @@ namespace Harthoorn.Dixit
             if (Children == null) Children = new List<Node>();
         }
 
-        public void Append(Node node)
+        public void Append(Node child, bool dismiss = false)
         {
             InitChildren();
-            if (node != null)
+            if (child != null)
             {
-                Children.Add(node);
-                node.Parent = this;
-                this.TokenExpand(node);
-                if (node.State != State.Valid) this.State = State.Invalid;
-            }
-        }
+                Children.Add(child);
+                child.Parent = this;
 
-        public void TokenExpand(Node node)
-        {
-            this.Token.Expand(node.Token);
+                switch (child.State)
+                {
+                    case State.Valid:
+                        Token.ExpandWith(child.Token); break;
+
+                    case State.Error:
+                        Token.ExpandWith(child.Token);
+                        this.State = dismiss ? State.Dismissed : State.Error;
+                        break;
+
+                    case State.Dismissed:
+                        break;
+                }
+            }
         }
 
         public override string ToString()
@@ -74,8 +91,7 @@ namespace Harthoorn.Dixit
             if (!Token.IsEmpty)
                 output += $": {Token}";
 
-            if (State != State.Valid)
-                output +=  $" [{State}]";
+                output +=  $" [{State.ToString().ToUpper()}]";
 
             return output;
         }

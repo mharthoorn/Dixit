@@ -49,14 +49,15 @@ namespace Harthoorn.Dixit
         public bool IsEmpty => this.Length == 0;
 
 
-        public void Expand(Token token)
+        public void ExpandWith(Token token)
         {
             if (token.End > this.End) this.End = token.End;
         }
 
         public override string ToString()
         {
-            return $"\"{Text}\" [{Start}..{End}]";
+            string text = Text.Replace("\r", "{\\r}").Replace("\n", "{\\n}") ;
+            return $"\"{text}\" [{Start}..{End}]";
         }
     }
 

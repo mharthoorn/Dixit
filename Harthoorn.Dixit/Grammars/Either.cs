@@ -32,7 +32,7 @@ namespace Harthoorn.Dixit
                 bool ok = grammar.Parse(ref lexer, out Node n);
                 if (ok)
                 {
-                    node.Append(n);
+                    node.Append(n, dismiss: true);
                     return true;
                 }
                 else

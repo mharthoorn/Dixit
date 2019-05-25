@@ -14,7 +14,7 @@
             var grammar = language.Grammar;
             var lexer = new Lexer(file);
             bool success = grammar.Parse(ref lexer, out root);
-            if (success) root.Prune();
+            root.Prune();
             return success;
         }
     }

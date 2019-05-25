@@ -91,7 +91,7 @@ namespace Harthoorn.Dixit
         {
             if (node.Children is null) return;
 
-            node.Children = node.Children.Where(c => c.State == State.Valid).ToList();
+            node.Children = node.Children.Where(c => c.State != State.Dismissed).ToList();
             foreach (var c in node.Children) c.Prune();
         }
     }
