@@ -38,20 +38,20 @@ namespace Harthoorn.Dixit
         //}
 
 
-        public static Either Either(this Concept concept, params object[] words)
+        public static Concept Either(this Concept concept, params object[] words)
         {
             var grammars = Grammarize(words);
             var either = new Either(concept.Name+"-either", concept.Language.WhiteSpace, grammars);
             concept.Grammar = either;
-            return either;
+            return concept;
         }
 
-        public static Sequence Sequence(this Concept concept, params object[] words)
+        public static Concept Sequence(this Concept concept, params object[] words)
         {
             var grammars = Grammarize(words);
             var sequence = new Sequence(concept.Name+"-sequence", concept.Language.WhiteSpace, grammars);
             concept.Grammar = sequence;
-            return sequence;
+            return concept;
         }
 
         public static IGrammar Syntax(this Language language, string name, ISyntax syntax)
@@ -73,7 +73,8 @@ namespace Harthoorn.Dixit
         public static Concept Interlace(this Concept concept, string glue, IGrammar grammar)
         {
             var glueSyntax = new Literal(glue);
-            var interlace = new Interlace(concept.Name+"-interlace", glueSyntax, grammar, concept.Language.WhiteSpace);
+            var glueGrammar = new Syntax(glue, glueSyntax);
+            var interlace = new Interlace(concept.Name+"-interlace", glueGrammar, grammar, concept.Language.WhiteSpace);
             concept.Grammar = interlace;
             return concept;
         }
@@ -86,9 +87,10 @@ namespace Harthoorn.Dixit
             return grammar;
         }
 
-        public static void As(this Concept concept, IGrammar grammar)
+        public static Concept As(this Concept concept, IGrammar grammar)
         {
             concept.Grammar = grammar;
+            return concept;
         }
 
         public static Concept As(this Concept concept, ISyntax syntax)
@@ -140,6 +142,11 @@ namespace Harthoorn.Dixit
             var optional = new Optional($"Optional({concept.Name})", grammar);
             concept.Grammar = optional;
             return concept;
+        }
+
+        public static Optional Optional(this IGrammar grammar)
+        {
+            return new Optional($"Optional({grammar.Name})", grammar);
         }
                 
 

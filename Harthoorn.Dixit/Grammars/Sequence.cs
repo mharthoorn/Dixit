@@ -16,19 +16,16 @@ namespace Harthoorn.Dixit
             this.list = items.ToList();
         }
 
-        public bool Parse(ref Lexer lexer, out Node node)
+        public bool Parse(ref Lexer lexer, out SyntaxNode node)
         {
             whitespace.Parse(ref lexer); // consume whitespace.
-
-            node = new Node(this, lexer.Here);
-
-            Lexer bookmark = lexer;
+            node = new SyntaxNode(this, lexer.Here);
 
             foreach (var grammar in list)
             {
                 whitespace.Parse(ref lexer);
 
-                bool ok = grammar.Parse(ref lexer, out Node n);
+                bool ok = grammar.Parse(ref lexer, out SyntaxNode n);
                 node.Append(n);
                 if (!ok) return false;
             }

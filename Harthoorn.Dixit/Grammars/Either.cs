@@ -17,32 +17,34 @@ namespace Harthoorn.Dixit
         }
          
         
-        public bool Parse(ref Lexer lexer, out Node node)
+        public bool Parse(ref Lexer lexer, out SyntaxNode node)
         {
             whitespace.Parse(ref lexer); // consume whitespace.
-            Node failure = null;
+            var branches = new List<SyntaxNode>();
 
-            node = new Node(this, lexer.Consume());
+            node = new SyntaxNode(this, lexer.Here);
             var bookmark = lexer;
 
             foreach (var grammar in Children)
             {
-                lexer.Reset(bookmark);
+                lexer = bookmark;
 
-                bool ok = grammar.Parse(ref lexer, out Node n);
+                bool ok = grammar.Parse(ref lexer, out SyntaxNode n);
+
                 if (ok)
                 {
-                    node.Append(n, dismiss: true);
+                    node.Append(n);
                     return true;
                 }
                 else
                 {
-                    failure = Nodes.GetLongest(n, failure);
+                    branches.Add(n);
                 }
             }
 
-            failure.State = State.Error;
-            node.Append(failure);
+            var longest = branches.GetLongest();
+            longest.Error();
+            node.Append(longest);
             return false;
                 
         }

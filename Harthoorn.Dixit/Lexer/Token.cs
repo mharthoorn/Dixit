@@ -14,36 +14,12 @@ namespace Harthoorn.Dixit
         public bool IsValid;
         // no error message. Token is too bare metal for that.
 
-        public Token(ISourceFile file, int start, int end)
+        public Token(ISourceFile file, int start, int end, bool valid)
         {
             this.File = file;
             this.Start = start;
             this.End = end;
-            this.IsValid = true;
-        }
-
-
-        public Token FailsOnEmpty()
-        {
-            return FailWhen(IsEmpty);
-        }
-
-        public Token FailWhen(Predicate<Token> predicate)
-        {
-            if (predicate(this))
-            {
-                this.IsValid = false;
-            }
-            return this;
-        }
-
-        public Token FailWhen(bool predicate)
-        {
-            if (predicate)
-            {
-                this.IsValid = false;
-            }
-            return this;
+            this.IsValid = valid;
         }
 
         public bool IsEmpty => this.Length == 0;

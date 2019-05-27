@@ -22,7 +22,7 @@ namespace Harthoorn.Dixit
         public Token Parse(ref Lexer lexer)
         {
             int i = lexer.Advance(characters.Contains);
-            return lexer.Consume().FailWhen(i < minlength);
+            return lexer.Capture(i >= minlength);
         }
 
         public override string ToString()

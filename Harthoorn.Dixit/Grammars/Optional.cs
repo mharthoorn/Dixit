@@ -12,20 +12,21 @@ namespace Harthoorn.Dixit
             this.grammar = grammar;
         }
         
-        public bool Parse(ref Lexer lexer, out Node node)
+        public bool Parse(ref Lexer lexer, out SyntaxNode node)
         {
             var bookmark = lexer;
-            node = new Node(this, lexer.Here);
+            node = new SyntaxNode(this, lexer.Here);
 
-            var ok = grammar.Parse(ref lexer, out Node n);
+            var ok = grammar.Parse(ref lexer, out SyntaxNode n);
+            if (!ok) lexer = bookmark;
             node.Append(n, dismiss: true); // always save good or bad.
-            if (!ok) lexer.Reset(bookmark);
+            
             return true; 
         }
 
         public override string ToString()
         {
-            return nameof(Optional);
+            return Name;
         }
     }
 

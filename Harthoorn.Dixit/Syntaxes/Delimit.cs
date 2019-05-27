@@ -15,9 +15,10 @@ namespace Harthoorn.Dixit
 
         public Token Parse(ref Lexer lexer)
         {
-            bool ok = true, esc = false;
-            var bookmark = lexer;
-            if (lexer.Advance(Start)) lexer.Consume(); else return lexer.Here.FailsOnEmpty();
+            bool esc = false;
+
+            bool ok = lexer.Advance(Start);
+            if (!ok) return lexer.Capture(false);
             
             do 
             {
@@ -26,10 +27,8 @@ namespace Harthoorn.Dixit
                 ok = lexer.Advance();
             } 
             while (ok);
-            var token = lexer.Consume();
-            if (ok) { lexer.Advance(End); lexer.Consume(); } // consume the End character.
-            //token.Text = token.Text.TrimStart(Start).TrimEnd(End);
-            return token.FailWhen(!ok);
+            ok = lexer.Advance(End);
+            return lexer.Capture(ok);
         }
 
         public override string ToString()

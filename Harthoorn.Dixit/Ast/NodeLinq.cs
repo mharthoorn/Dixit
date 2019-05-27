@@ -5,17 +5,17 @@ namespace Harthoorn.Dixit
 {
     public static class NodeLinq
     {
-        public static IEnumerable<Node> RecursiveSelect(this Node node, Predicate<Node> predicate)
+        public static IEnumerable<SyntaxNode> RecursiveSelect(this SyntaxNode node, Predicate<SyntaxNode> predicate)
         {
-            var results = new List<Node>();
+            var results = new List<SyntaxNode>();
             node.Visit(addwhen);
 
             return results;
 
-            void addwhen(Node n) { if (predicate(n)) results.Add(n); };
+            void addwhen(SyntaxNode n) { if (predicate(n)) results.Add(n); };
         }
 
-        public static IEnumerable<Node> DeepSelect(this Node node, Predicate<Node> predicate)
+        public static IEnumerable<SyntaxNode> DeepSelect(this SyntaxNode node, Predicate<SyntaxNode> predicate)
         {
             if (node.Children is null) yield break;
 
@@ -32,7 +32,7 @@ namespace Harthoorn.Dixit
             }
         }
 
-        public static Node Find(this Node node, Predicate<Node> predicate)
+        public static SyntaxNode Find(this SyntaxNode node, Predicate<SyntaxNode> predicate)
         {
             if (node.Children is null) return null;
             if (predicate(node)) return node;

@@ -14,7 +14,7 @@ namespace Harthoorn.Dixit
         public Token Parse(ref Lexer lexer)
         {
             var ok = lexer.Advance(literal, ignoreCase);
-            return lexer.Consume().FailWhen(!ok);
+            return lexer.Capture(ok);
         }
 
         public override string ToString()

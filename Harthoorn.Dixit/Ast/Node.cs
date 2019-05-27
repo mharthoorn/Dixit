@@ -9,19 +9,16 @@ namespace Harthoorn.Dixit
         Error       // This node contains an error
     };
 
-    public static class StateExtensions
-    {
-        
-    }
+    
 
-    public class Node
+    public class SyntaxNode
     {
         public IGrammar Grammar; 
         public ISyntax Syntax;
         public Token Token;
         public State State;
-        public Node Parent;
-        public List<Node> Children;
+        public SyntaxNode Parent;
+        public List<SyntaxNode> Children;
 
         public string Text => Token.Text;
 
@@ -29,9 +26,9 @@ namespace Harthoorn.Dixit
         public int End => Token.End;
         public int Length => Token.Length;
 
-        public Node this[int index] => Children[index];
+        public SyntaxNode this[int index] => Children[index];
 
-        public Node(IGrammar grammar, Token token)
+        public SyntaxNode(IGrammar grammar, Token token)
         {
             this.Grammar = grammar;
             this.Syntax = null;
@@ -39,7 +36,7 @@ namespace Harthoorn.Dixit
             this.State = State.Valid;
         }
 
-        public Node(IGrammar grammar, ISyntax syntax, Token token)
+        public SyntaxNode(IGrammar grammar, ISyntax syntax, Token token)
         {
             this.Grammar = grammar;
             this.Syntax = syntax;
@@ -47,7 +44,7 @@ namespace Harthoorn.Dixit
             this.State = State.Valid;
         }
 
-        public Node(IGrammar grammar, ISyntax syntax, Token token, State state)
+        public SyntaxNode(IGrammar grammar, ISyntax syntax, Token token, State state)
         {
             this.Grammar = grammar;
             this.Syntax = syntax;
@@ -57,13 +54,13 @@ namespace Harthoorn.Dixit
 
         private void InitChildren()
         {
-            if (Children == null) Children = new List<Node>();
+            if (Children == null) Children = new List<SyntaxNode>();
         }
 
-        public void Append(Node child, bool dismiss = false)
+        public void Append(SyntaxNode child, bool dismiss = false)
         {
             InitChildren();
-            if (child != null)
+            if (child is object)
             {
                 Children.Add(child);
                 child.Parent = this;
@@ -74,8 +71,8 @@ namespace Harthoorn.Dixit
                         Token.ExpandWith(child.Token); break;
 
                     case State.Error:
-                        Token.ExpandWith(child.Token);
                         this.State = dismiss ? State.Dismissed : State.Error;
+                        if (State != State.Dismissed) Token.ExpandWith(child.Token);
                         break;
 
                     case State.Dismissed:
@@ -88,7 +85,7 @@ namespace Harthoorn.Dixit
         {
             string output = $"{Grammar}";
 
-            if (!Token.IsEmpty)
+            //if (!Token.IsEmpty)
                 output += $": {Token}";
 
                 output +=  $" [{State.ToString().ToUpper()}]";
@@ -96,8 +93,6 @@ namespace Harthoorn.Dixit
             return output;
         }
     }
-
-  
 
    
 }

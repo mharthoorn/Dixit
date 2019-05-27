@@ -25,7 +25,7 @@ namespace Harthoorn.Dixit
                     lexer.Advance();
                 }
             }
-            return new Token(lexer.File, lexer.Bookmark, lexer.Cursor).FailWhen(!valid);
+            return lexer.Capture(valid);
         }
     }
 

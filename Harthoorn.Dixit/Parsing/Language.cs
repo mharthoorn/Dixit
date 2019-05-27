@@ -22,9 +22,11 @@ namespace Harthoorn.Dixit
         public void DefineGrammar(IGrammar program)
         {
             this.Grammar = new Concept(this, "Grammar");
-            var eof = new EOF();
+            var eof = new EOF(WhiteSpace);
             Grammar.Sequence(program, eof);
 
         }
     }
+
+    
 }

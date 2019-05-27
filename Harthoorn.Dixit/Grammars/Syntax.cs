@@ -11,7 +11,7 @@ namespace Harthoorn.Dixit
             this.syntax = syntax;
         }
 
-        public bool Parse(ref Lexer lexer, out Node node)
+        public bool Parse(ref Lexer lexer, out SyntaxNode node)
         {
             var token = syntax.Parse(ref lexer);
             node = Nodes.Create(this, syntax, token);

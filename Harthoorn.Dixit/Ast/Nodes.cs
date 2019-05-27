@@ -8,30 +8,30 @@ namespace Harthoorn.Dixit
     public static class Nodes
     {
         
-        public static Node Create(IGrammar grammar, ISyntax syntax, Token token)
+        public static SyntaxNode Create(IGrammar grammar, ISyntax syntax, Token token)
         {
             var state = token.IsValid ? State.Valid : State.Error;
-            var node = new Node(grammar, syntax, token, state);
+            var node = new SyntaxNode(grammar, syntax, token, state);
             return node;
         }
 
-        public static Node GetExpect(this Node node)
+        public static SyntaxNode GetExpect(this SyntaxNode node)
         {
             var error = node.GetError();
             if (error is null) return null;
 
             var expect = error;
-            while ( !(expect.Grammar is Concept) && expect.Parent is Node) expect = expect.Parent;
+            while ( !(expect.Grammar is Concept) && expect.Parent is SyntaxNode) expect = expect.Parent;
             return expect;
         }
 
-        public static Node GetError(this Node root)
+        public static SyntaxNode GetError(this SyntaxNode root)
         {
             var errors = root.Descendants().Where(n => n.State == State.Error);
-            return errors.Longest();
+            return errors.GetLongest();
         }
 
-        public static IEnumerable<Node> Descendants(this Node node)
+        public static IEnumerable<SyntaxNode> Descendants(this SyntaxNode node)
         {
             if (node.Children == null) yield break;
 
@@ -46,15 +46,9 @@ namespace Harthoorn.Dixit
             }
         }
 
-        public static Node Encapsulate(this Node node, Lexer previous, Lexer current)
+        public static SyntaxNode GetLongest(this IEnumerable<SyntaxNode> nodes)
         {
-            node.Token = Lexer.Encapsulate(previous, current);
-            return node;
-        }
-
-        public static Node Longest(this IEnumerable<Node> nodes)
-        {
-            Node longest = null; int max = 0;
+            SyntaxNode longest = null; int max = 0;
             foreach(var node in nodes)
             {
                 
@@ -68,26 +62,43 @@ namespace Harthoorn.Dixit
             return longest;
         }
 
-        public static Node GetLongest(params Node[] nodes)
+        public static SyntaxNode GetLongest(params SyntaxNode[] nodes)
         {
-            return Longest(nodes);
+            return GetLongest((IEnumerable<SyntaxNode>)nodes);
         }
 
-        public static void Visit(this Node node, Action<Node> action)
+        public static SyntaxNode GetLongestChild(this SyntaxNode node)
+        {
+            var nodes = node.Children;
+            return GetLongest(nodes);
+        }
+
+        public static void Error(this SyntaxNode node)
+        {
+            if (node is object) node.State = State.Error;
+        }
+
+        public static SyntaxNode GetLongestChild(this SyntaxNode node, Predicate<SyntaxNode> predicate)
+        {
+            var nodes = node.Children.Where(c => predicate(c));
+            return GetLongest(nodes);
+        }
+
+        public static void Visit(this SyntaxNode node, Action<SyntaxNode> action)
         {
             action(node);
             if (node.Children == null) return;
             foreach(var n in node.Children) Visit(n, action);
         }
 
-        public static void Visit<T>(this Node node, Action<Node, T> action, T covariable, Func<T, T> cofunc)
+        public static void Visit<T>(this SyntaxNode node, Action<SyntaxNode, T> action, T covariable, Func<T, T> cofunc)
         {
             action(node, covariable);
             if (node.Children == null) return;
             foreach(var n in node.Children) Visit(n, action, cofunc(covariable), cofunc);
         }
 
-        public static void Prune(this Node node)
+        public static void Prune(this SyntaxNode node)
         {
             if (node.Children is null) return;
 

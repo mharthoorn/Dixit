@@ -16,14 +16,13 @@ namespace Harthoorn.Dixit
 
         public IGrammar Grammar { get; internal set; }
 
-        public bool Parse(ref Lexer lexer, out Node node)
+        public bool Parse(ref Lexer lexer, out SyntaxNode node)
         {
-            node = new Node(this, lexer.Here);
-
             if (Grammar is null) throw new Exception($"Concept {Name} does not have a defined grammar.");
 
-            bool ok = this.Grammar.Parse(ref lexer, out Node n);
-            node.Append(n);
+            bool ok = this.Grammar.Parse(ref lexer, out node);
+            this.Fold(node);
+
             return ok;
         }
 

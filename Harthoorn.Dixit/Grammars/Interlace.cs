@@ -5,9 +5,9 @@ namespace Harthoorn.Dixit
         public string Name { get; }
         IGrammar item;
         ISyntax whitespace;
-        ISyntax glue;
+        IGrammar glue;
 
-        public Interlace(string name, ISyntax glue, IGrammar item, ISyntax whitespace)
+        public Interlace(string name, IGrammar glue, IGrammar item, ISyntax whitespace)
         {
             this.Name = name;
             this.whitespace = whitespace;
@@ -15,30 +15,13 @@ namespace Harthoorn.Dixit
             this.glue = glue;
         }
 
-        private bool ParseGlue(ref Lexer lexer)
-        {
-            var bookmark = lexer;
+       
 
-            whitespace.Parse(ref lexer);
-            var token = glue.Parse(ref lexer);
-            if (token.IsValid)
-            {
-                return true;
-            }
-            else
-            {
-                lexer.Reset(bookmark);
-                return false;
-
-            }
-        }
-
-        public bool Parse(ref Lexer lexer, out Node node)
+        public bool Parse(ref Lexer lexer, out SyntaxNode node)
         {
             whitespace.Parse(ref lexer); // consume whitespace.
 
-            node = new Node(this, lexer.Consume());
-            var bm = lexer;
+            node = new SyntaxNode(this, lexer.Here);
 
             bool ok = true, first = true;
             while (ok)
@@ -46,8 +29,12 @@ namespace Harthoorn.Dixit
                 if (!first)
                 {
                     whitespace.Parse(ref lexer);
-                    ok = ParseGlue(ref lexer);
-                    if (!ok)
+                    
+                    if (glue.Parse(ref lexer, out SyntaxNode nglue))
+                    {
+                        node.Append(nglue);
+                    }
+                    else 
                     {
                         ok = true; // we are at the end of the list
                         break; 
@@ -56,7 +43,7 @@ namespace Harthoorn.Dixit
                 first = false;
 
                 whitespace.Parse(ref lexer);
-                ok = item.Parse(ref lexer, out Node n);
+                ok = item.Parse(ref lexer, out SyntaxNode n);
                 node.Append(n); // always append (or you will lose your error)
             }
             return ok;
