@@ -46,7 +46,7 @@ namespace Harthoorn.Dixit
             return concept;
         }
 
-        public static Concept Sequence(this Concept concept, params object[] words)
+        public static Node Sequence(this Node concept, params object[] words)
         {
             var grammars = Grammarize(words);
             var sequence = new Sequence(concept.Name+"-sequence", concept.Language.WhiteSpace, grammars);
@@ -100,10 +100,24 @@ namespace Harthoorn.Dixit
             return concept;
         }
 
+        public static Node As(this Node concept, ISyntax syntax)
+        {
+            var grammar = new Syntax(concept.Name + "-syntax", syntax);
+            concept.Grammar = grammar;
+            return concept;
+        }
 
-        public static Concept Define(this Language language, string name)
+
+        public static Concept Concept(this Language language, string name)
         {
             var grammar = new Concept(language, name);
+            language.Add(grammar);
+            return grammar;
+        }
+
+        public static Node Anonymous(this Language language, string name)
+        {
+            var grammar = new Node(language, name);
             language.Add(grammar);
             return grammar;
         }

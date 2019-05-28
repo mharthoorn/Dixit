@@ -4,8 +4,7 @@
     {
         public Token Parse(ref Lexer lexer)
         {
-            while (lexer.Advance());
-            return lexer.Capture(lexer.Consumable == 0);
+            return lexer.Capture(lexer.IsAtEnd);
         }
     }
 
@@ -26,7 +25,8 @@
         {
             whitespace.Parse(ref lexer);
             var token = eof.Parse(ref lexer);
-            node = new SyntaxNode(this, token);
+            var state = (token.IsValid) ? State.Valid : State.Error;
+            node = new SyntaxNode(this, eof, token, state);
             return token.IsValid;
 
         }

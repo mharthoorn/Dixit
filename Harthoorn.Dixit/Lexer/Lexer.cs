@@ -98,6 +98,9 @@ namespace Harthoorn.Dixit
             }
         }
 
+        public bool IsAtEnd => this.Text.Length <= this.cursor;
+        
+
         public override string ToString()
         {
             var start = Math.Max(0, this.cursor-10);

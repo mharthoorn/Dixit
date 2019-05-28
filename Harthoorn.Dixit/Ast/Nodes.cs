@@ -15,20 +15,15 @@ namespace Harthoorn.Dixit
             return node;
         }
 
-        public static SyntaxNode GetExpect(this SyntaxNode node)
+        public static SyntaxNode GetErrorNode(this SyntaxNode root)
         {
-            var error = node.GetError();
-            if (error is null) return null;
+            var descendants = root.Descendants().ToList();
+            var errors = root.Descendants().Where(n => n.State == State.Error).ToList();
+            var branch = errors.GetFarthest();
 
-            var expect = error;
-            while ( !(expect.Grammar is Concept) && expect.Parent is SyntaxNode) expect = expect.Parent;
-            return expect;
-        }
+            var node = branch.FindDeepest(n => n.State == State.Error && n.Grammar is Concept);
 
-        public static SyntaxNode GetError(this SyntaxNode root)
-        {
-            var errors = root.Descendants().Where(n => n.State == State.Error);
-            return errors.GetLongest();
+            return node;
         }
 
         public static IEnumerable<SyntaxNode> Descendants(this SyntaxNode node)
@@ -46,12 +41,11 @@ namespace Harthoorn.Dixit
             }
         }
 
-        public static SyntaxNode GetLongest(this IEnumerable<SyntaxNode> nodes)
+        public static SyntaxNode GetFarthest(this IEnumerable<SyntaxNode> nodes)
         {
             SyntaxNode longest = null; int max = 0;
             foreach(var node in nodes)
             {
-                
                 var end = node?.End ?? 0;
                 if (end > max)
                 {
@@ -62,15 +56,15 @@ namespace Harthoorn.Dixit
             return longest;
         }
 
-        public static SyntaxNode GetLongest(params SyntaxNode[] nodes)
+        public static SyntaxNode GetFarthest(params SyntaxNode[] nodes)
         {
-            return GetLongest((IEnumerable<SyntaxNode>)nodes);
+            return GetFarthest((IEnumerable<SyntaxNode>)nodes);
         }
 
-        public static SyntaxNode GetLongestChild(this SyntaxNode node)
+        public static SyntaxNode GetFarthestChild(this SyntaxNode node)
         {
             var nodes = node.Children;
-            return GetLongest(nodes);
+            return GetFarthest(nodes);
         }
 
         public static void Error(this SyntaxNode node)
@@ -78,10 +72,10 @@ namespace Harthoorn.Dixit
             if (node is object) node.State = State.Error;
         }
 
-        public static SyntaxNode GetLongestChild(this SyntaxNode node, Predicate<SyntaxNode> predicate)
+        public static SyntaxNode GetChild(this SyntaxNode node, Predicate<SyntaxNode> predicate)
         {
             var nodes = node.Children.Where(c => predicate(c));
-            return GetLongest(nodes);
+            return GetFarthest(nodes);
         }
 
         public static void Visit(this SyntaxNode node, Action<SyntaxNode> action)

@@ -42,7 +42,7 @@ namespace Harthoorn.Dixit
                 }
             }
 
-            var longest = branches.GetLongest();
+            var longest = branches.GetFarthest();
             longest.Error();
             node.Append(longest);
             return false;
