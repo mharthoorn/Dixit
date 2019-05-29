@@ -20,5 +20,14 @@
             ast.Prune();
             return success;
         }
+
+        public static bool Compile(this IGrammar grammar, string text, out SyntaxNode ast)
+        {
+            var file = new MemoryFile(text);
+            var lexer = new Lexer(file);
+            bool success = grammar.Parse(ref lexer, out ast);
+            ast.Prune();
+            return success;
+        }
     }
 }

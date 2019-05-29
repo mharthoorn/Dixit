@@ -15,11 +15,9 @@ namespace Harthoorn.Dixit
             this.glue = glue;
         }
 
-       
-
         public bool Parse(ref Lexer lexer, out SyntaxNode node)
         {
-            whitespace.Parse(ref lexer); // consume whitespace.
+            whitespace.Parse(ref lexer); 
 
             node = new SyntaxNode(this, lexer.Here);
 
