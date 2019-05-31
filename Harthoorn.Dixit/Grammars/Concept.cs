@@ -5,9 +5,12 @@ namespace Harthoorn.Dixit
 
     public class Concept : Node
     {
-       
-        public Concept(Language language, string name) : base (language, name)
+
+        public Language Language;
+
+        public Concept(string name, Language language) : base (name, language)
         {
+            this.Language = language;
         }
 
         public override string ToString()

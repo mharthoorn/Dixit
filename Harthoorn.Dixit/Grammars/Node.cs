@@ -4,11 +4,10 @@ namespace Harthoorn.Dixit
 {
     public class Node : IGrammar
     {
+        public Language Language { get; private set; }
         public string Name { get; }
 
-        internal Language Language;
-
-        public Node (Language language, string name)
+        public Node (string name, Language language)
         {
             this.Name = name;
             this.Language = language;

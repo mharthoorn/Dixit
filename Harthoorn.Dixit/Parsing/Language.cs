@@ -4,7 +4,7 @@ namespace Harthoorn.Dixit
 {
     public class Language 
     {
-        public Concept Grammar { get; private set; }
+        public Concept Grammar;
         public ISyntax WhiteSpace { get; set; }
         List<IGrammar> elements;
         
@@ -21,7 +21,7 @@ namespace Harthoorn.Dixit
 
         public void DefineGrammar(IGrammar program)
         {
-            this.Grammar = new Concept(this, "Grammar");
+            Grammar = new Concept("Grammar", this);
             var eof = new EOF(WhiteSpace);
             Grammar.Sequence(program, eof);
 

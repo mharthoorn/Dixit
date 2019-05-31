@@ -61,12 +61,10 @@ namespace Harthoorn.Dixit
             return grammar;
         }
 
-        public static IGrammar WhiteSpace(this Language language, params char[] characters)
+        public static IGrammar WhiteSpace(params char[] characters)
         {
             var syntax = new CharSet(0, characters);
-            language.WhiteSpace = syntax; 
             var grammar = Grammar.Grammarize(syntax);
-            language.Add(grammar);
             return grammar;
         }
 
@@ -79,11 +77,10 @@ namespace Harthoorn.Dixit
             return concept;
         }
 
-        public static IGrammar Literal(this Language language, string name, string literal)
+        public static IGrammar Literal(string name, string literal)
         {
             var syntax = new Literal(literal);
             var grammar = new Syntax(name, syntax);
-            language.Add(grammar);
             return grammar;
         }
 
@@ -110,14 +107,13 @@ namespace Harthoorn.Dixit
 
         public static Concept Concept(this Language language, string name)
         {
-            var grammar = new Concept(language, name);
-            language.Add(grammar);
+            var grammar = new Concept(name, language);
             return grammar;
         }
 
         public static Node Anonymous(this Language language, string name)
         {
-            var grammar = new Node(language, name);
+            var grammar = new Node(name, language);
             language.Add(grammar);
             return grammar;
         }
