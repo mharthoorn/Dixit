@@ -3,19 +3,30 @@
 namespace Harthoorn.Dixit
 {
 
-    public class Concept : Node
+    public class Concept : IGrammar
     {
-
-        public Language Language;
-
-        public Concept(string name, Language language) : base (name, language)
+        public string Name { get; }
+        
+        public IGrammar Grammar { get; internal set; }
+        public ISyntax Whitespace { get; private set; }
+         
+        public Concept(string name, ISyntax whitespace) 
         {
-            this.Language = language;
+            this.Name = name;
+            Whitespace = whitespace;
+        }
+
+        public bool Parse(ref Lexer lexer, out SyntaxNode node)
+        {
+            bool ok = Grammar.Parse(ref lexer, out node);
+            this.Fold(node);
+
+            return ok;
         }
 
         public override string ToString()
         {
-            return $"{Name} (Concept)";
+            return $"{Name} (Node)";
         }
     }
 }

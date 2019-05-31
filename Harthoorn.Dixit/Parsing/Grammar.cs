@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Harthoorn.Dixit
 {
-    public static class Grammar
+    public static class Grammars
     {
         public static IGrammar Grammarize(object word)
         {
@@ -19,7 +19,7 @@ namespace Harthoorn.Dixit
 
         public static IEnumerable<IGrammar> Grammarize(this object[] words)
         {
-            return words.Select(Grammar.Grammarize).Where(g => g != null);
+            return words.Select(Grammars.Grammarize).Where(g => g != null);
         }
 
         //public static IGrammar Range(this IGrammar grammar, params object[] items)
@@ -41,30 +41,29 @@ namespace Harthoorn.Dixit
         public static Concept Either(this Concept concept, params object[] words)
         {
             var grammars = Grammarize(words);
-            var either = new Either(concept.Name+"-either", concept.Language.WhiteSpace, grammars);
+            var either = new Either(concept.Name+"-either", concept.Whitespace, grammars);
             concept.Grammar = either;
             return concept;
         }
 
-        public static Node Sequence(this Node concept, params object[] words)
+        public static Concept Sequence(this Concept concept, params object[] words)
         {
             var grammars = Grammarize(words);
-            var sequence = new Sequence(concept.Name+"-sequence", concept.Language.WhiteSpace, grammars);
+            var sequence = new Sequence(concept.Name+"-sequence", concept.Whitespace, grammars);
             concept.Grammar = sequence;
             return concept;
         }
 
-        public static IGrammar Syntax(this Language language, string name, ISyntax syntax)
+        public static IGrammar Syntax(string name, ISyntax syntax)
         {
             var grammar = new Syntax(name, syntax);
-            language.Add(grammar);
             return grammar;
         }
 
         public static IGrammar WhiteSpace(params char[] characters)
         {
             var syntax = new CharSet(0, characters);
-            var grammar = Grammar.Grammarize(syntax);
+            var grammar = Grammars.Grammarize(syntax);
             return grammar;
         }
 
@@ -72,7 +71,7 @@ namespace Harthoorn.Dixit
         {
             var glueSyntax = new Literal(glue);
             var glueGrammar = new Syntax(glue, glueSyntax);
-            var interlace = new Interlace(concept.Name+"-interlace", glueGrammar, grammar, concept.Language.WhiteSpace);
+            var interlace = new Interlace(concept.Name+"-interlace", glueGrammar, grammar, concept.Whitespace);
             concept.Grammar = interlace;
             return concept;
         }
@@ -97,32 +96,10 @@ namespace Harthoorn.Dixit
             return concept;
         }
 
-        public static Node As(this Node concept, ISyntax syntax)
-        {
-            var grammar = new Syntax(concept.Name + "-syntax", syntax);
-            concept.Grammar = grammar;
-            return concept;
-        }
-
-
-        public static Concept Concept(this Language language, string name)
-        {
-            var grammar = new Concept(name, language);
-            return grammar;
-        }
-
-        public static Node Anonymous(this Language language, string name)
-        {
-            var grammar = new Node(name, language);
-            language.Add(grammar);
-            return grammar;
-        }
-
-        public static IGrammar CiLiteral(this Language language, string literal)
+        public static IGrammar CiLiteral(string literal)
         {
             var syntax = new Literal(literal, ignoreCase: true);
             var grammar = new Syntax(literal, syntax);
-            language.Add(grammar);
             return grammar;
         }
 
@@ -134,16 +111,15 @@ namespace Harthoorn.Dixit
             return concept;
         }
 
-        public static IGrammar CharSet(this Language language, string name, params string[] chars)
+        public static IGrammar CharSet(string name, params string[] chars)
         {
-            return language.CharSet(name, 0, chars); 
+            return CharSet(name, 0, chars); 
         }
 
-        public static IGrammar CharSet(this Language language, string name, int minlength, params string[] chars)
+        public static IGrammar CharSet(string name, int minlength, params string[] chars)
         {
             var charset = new CharSet(minlength, chars);
             var unit = new Syntax(name, charset);
-            language.Add(unit);
             return unit;
         }
 
