@@ -6,25 +6,29 @@ namespace Harthoorn.Dixit
         IGrammar item;
         ISyntax whitespace;
         IGrammar glue;
+        int mincount;
 
-        public Interlace(string name, IGrammar glue, IGrammar item, ISyntax whitespace)
+        public Interlace(string name, IGrammar glue, IGrammar item, ISyntax whitespace, int mincount)
         {
             this.Name = name;
             this.whitespace = whitespace;
             this.item = item;
             this.glue = glue;
+            this.mincount = mincount;
         }
 
         public bool Parse(ref Lexer lexer, out SyntaxNode node)
         {
-            whitespace.Parse(ref lexer); 
+            whitespace.Parse(ref lexer);
+            int count = 0;
 
             node = new SyntaxNode(this, lexer.Here);
-
-            bool ok = true, first = true;
-            while (ok)
+            
+            while (true)
             {
-                if (!first)
+                count++;
+
+                if (count > 1)
                 {
                     whitespace.Parse(ref lexer);
                     
@@ -34,17 +38,30 @@ namespace Harthoorn.Dixit
                     }
                     else 
                     {
-                        ok = true; // we are at the end of the list
-                        break; 
+                        return true;
                     }
                 }
-                first = false;
 
                 whitespace.Parse(ref lexer);
-                ok = item.Parse(ref lexer, out SyntaxNode n);
-                node.Append(n); // always append (or you will lose your error)
+                bool parsed = item.Parse(ref lexer, out SyntaxNode n);
+                if (parsed)
+                {
+                    node.Append(n, errorproliferation: State.Valid);
+
+                }
+                else if (count > mincount)
+                {
+                    node.Append(n, errorproliferation: State.Valid);
+                    return true;
+                }
+                else
+                {
+                    // always append (or you will lose your error)
+                    node.Append(n, errorproliferation: State.Error);
+                    return false;
+                }
+                
             }
-            return ok;
         }
 
         public override string ToString()

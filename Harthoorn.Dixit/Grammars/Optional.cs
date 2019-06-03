@@ -19,7 +19,7 @@ namespace Harthoorn.Dixit
 
             var ok = grammar.Parse(ref lexer, out SyntaxNode n);
             if (!ok) lexer = bookmark;
-            node.Append(n, dismiss: true); // always save good or bad.
+            node.Append(n, errorproliferation: State.Dismissed); // always save good or bad.
             
             return true; 
         }

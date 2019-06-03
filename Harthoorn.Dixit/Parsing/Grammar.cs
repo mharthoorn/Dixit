@@ -67,11 +67,11 @@ namespace Harthoorn.Dixit
             return grammar;
         }
 
-        public static Concept Interlace(this Concept concept, string glue, IGrammar grammar)
+        public static Concept Interlace(this Concept concept, string glue, IGrammar grammar, int mincount = 0)
         {
             var glueSyntax = new Literal(glue);
             var glueGrammar = new Syntax(glue, glueSyntax);
-            var interlace = new Interlace(concept.Name+"-interlace", glueGrammar, grammar, concept.Whitespace);
+            var interlace = new Interlace(concept.Name+"-interlace", glueGrammar, grammar, concept.Whitespace, mincount);
             concept.Grammar = interlace;
             return concept;
         }

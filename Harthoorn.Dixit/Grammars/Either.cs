@@ -6,7 +6,7 @@ namespace Harthoorn.Dixit
     public class Either : IGrammar
     {
         public string Name { get; }
-        IList<IGrammar> Children { get; set; }
+        List<IGrammar> Children { get; set; }
         ISyntax whitespace;
 
         public Either(string name, ISyntax whitespace, IEnumerable<IGrammar> grammars)

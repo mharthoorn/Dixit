@@ -57,7 +57,7 @@ namespace Harthoorn.Dixit
             if (Children == null) Children = new List<SyntaxNode>();
         }
 
-        public void Append(SyntaxNode child, bool dismiss = false)
+        public void Append(SyntaxNode child, State errorproliferation)
         {
             InitChildren();
             if (child is object)
@@ -71,7 +71,7 @@ namespace Harthoorn.Dixit
                         Token.ExpandWith(child.Token); break;
 
                     case State.Error:
-                        this.State = dismiss ? State.Dismissed : State.Error;
+                        this.State = errorproliferation;
                         if (State != State.Dismissed) Token.ExpandWith(child.Token);
                         break;
 
@@ -79,6 +79,12 @@ namespace Harthoorn.Dixit
                         break;
                 }
             }
+        }
+
+
+        public void Append(SyntaxNode child)
+        {
+            Append(child, errorproliferation: State.Error);
         }
 
         public override string ToString()
