@@ -34,25 +34,27 @@ namespace Harthoorn.Dixit
 
         public static SyntaxNode FindDeepest(this SyntaxNode root, Predicate<SyntaxNode> predicate)
         {
+            if (root is null) return null;
             var deepest = Dig(root, 0);
             return deepest.node ?? root;
 
 
             (SyntaxNode node, int depth) Dig(SyntaxNode node, int depth)
             {
-                if (node.Children is null) return (null, 0);
+                (SyntaxNode node, int depth) best = (node, depth);
 
-                (SyntaxNode node, int depth) best = (null, depth);
+                if (node.Children is null) return best;
+
                 foreach (var n in node.Children)
                 {
                     var result = Dig(n, depth+1);
 
-                    if (result.node is SyntaxNode && (best.node is null || result.depth > best.depth))
+                    if (result.node is object && (best.node is null || result.depth > best.depth))
                     {
                         best = result;
                     }
                 }
-                if (best.node is SyntaxNode) return best;
+                if (best.node is object) return best;
 
                 return predicate(node) ? (node, depth) : (null, 0);
             }

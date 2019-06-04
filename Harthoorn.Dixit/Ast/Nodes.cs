@@ -5,6 +5,14 @@ using System.Linq;
 namespace Harthoorn.Dixit
 {
 
+    public class SyntaxError
+    {
+        public SyntaxNode SyntaxNode;
+        public string Expected;
+        public string LineAndLocation;
+
+    }
+
     public static class Nodes
     {
         
@@ -24,6 +32,36 @@ namespace Harthoorn.Dixit
             var node = branch.FindDeepest(n => n.State == State.Error && n.Grammar is Concept);
 
             return node;
+        }
+
+        public static SyntaxError GetError(this SyntaxNode root)
+        {
+            var node = root.GetErrorNode();
+            if (node is null) return null;
+
+            return new SyntaxError
+            {
+                SyntaxNode = node,
+                Expected = node.Grammar.Name,
+                LineAndLocation = node.DisplayErrorLocation()
+            };
+        }
+
+        private static string GetLineString(Token token)
+        {
+            var text = token.File.Text;
+            int start = token.Start, end = token.Start, location = token.Start;
+
+            do  start--; while (start > 0 && text[start] != '\n' && text[start] != '\r');
+            do end++; while (end < text.Length && text[end] != '\n' && text[end] != '\r');
+
+
+            return text.Substring(start, end - start + 1).Insert(location - start, "|").Trim('\n', '\r');
+        }
+
+        public static string DisplayErrorLocation(this SyntaxNode error)
+        {
+            return GetLineString(error.Token);
         }
 
         public static IEnumerable<SyntaxNode> Descendants(this SyntaxNode node)
@@ -67,7 +105,7 @@ namespace Harthoorn.Dixit
             return GetFarthest(nodes);
         }
 
-        public static void Error(this SyntaxNode node)
+        public static void MarkAsError(this SyntaxNode node)
         {
             if (node is object) node.State = State.Error;
         }

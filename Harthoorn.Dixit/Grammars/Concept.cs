@@ -19,14 +19,14 @@ namespace Harthoorn.Dixit
         public bool Parse(ref Lexer lexer, out SyntaxNode node)
         {
             bool ok = Grammar.Parse(ref lexer, out node);
-            this.Fold(node);
+            node.RebaseTo(this);
 
             return ok;
         }
 
         public override string ToString()
         {
-            return $"{Name} (Node)";
+            return $"{Name} (Concept)";
         }
     }
 }
