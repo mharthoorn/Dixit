@@ -53,7 +53,7 @@ namespace Harthoorn.Dixit
         public static IEnumerable<SyntaxNode> PathSelect(this SyntaxNode node, IEnumerable<IGrammar> grammars)
         {
             var grammar = grammars.FirstOrDefault();
-            var results = node.WhereChildren(grammar);
+            var results = node.ChildrenWhere(grammar);
             var tail = grammars.Skip(1);
             if (tail.Count() > 0)
             {
@@ -80,12 +80,12 @@ namespace Harthoorn.Dixit
             return nodes.PathSelect((IEnumerable<IGrammar>)grammars);
         }
 
-        public static IEnumerable<SyntaxNode> WhereChildren(this SyntaxNode node, IGrammar grammar)
+        public static IEnumerable<SyntaxNode> ChildrenWhere(this SyntaxNode node, IGrammar grammar)
         {
             return node.Children.Where(n => n.Grammar.Name == grammar.Name);
         }
 
-        public static IEnumerable<SyntaxNode> WhereChildren(this IEnumerable<SyntaxNode> nodes, IGrammar grammar)
+        public static IEnumerable<SyntaxNode> ChildrenWhere(this IEnumerable<SyntaxNode> nodes, IGrammar grammar)
         {
             return nodes.SelectMany(n => n.Children.Where(c => c.Grammar.Name == grammar.Name));
         }
