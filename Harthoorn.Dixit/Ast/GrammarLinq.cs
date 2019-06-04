@@ -95,6 +95,23 @@ namespace Harthoorn.Dixit
             return node.Select(n => n.Token.Text);
         }
 
+        public static bool HasParent(this SyntaxNode node, IGrammar grammar)
+        {
+            while (node is object)
+            {
+                node = node.Parent;
+                if (node.Grammar == grammar) return true;
+            }
+            return false;
+        }
+
+        public static IEnumerable<SyntaxNode> NotUnder(this IEnumerable<SyntaxNode> nodes, IGrammar grammar)
+        {
+            foreach(var node in nodes)
+            {
+                if (!node.HasParent(grammar)) yield return node;
+            }
+        }
 
         public static IEnumerable<SyntaxNode> RecursiveSelect(this SyntaxNode node, IGrammar grammar)
         {
