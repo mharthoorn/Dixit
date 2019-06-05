@@ -112,6 +112,7 @@ namespace Harthoorn.Dixit
                 if (first)
                 {
                     best = item;
+                    first = false;
                 }
                 else
                 {
