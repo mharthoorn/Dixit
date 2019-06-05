@@ -24,17 +24,18 @@ namespace Harthoorn.Dixit
 
             node = new SyntaxNode(this, lexer.Here);
             var bookmark = lexer;
+            bool ok = false;
 
             foreach (var grammar in Children)
             {
                 lexer = bookmark;
 
-                bool ok = grammar.Parse(ref lexer, out SyntaxNode n);
+                ok = grammar.Parse(ref lexer, out SyntaxNode n);
 
                 if (ok)
                 {
                     node.Append(n);
-                    return true;
+                    break;
                 }
                 else
                 {
@@ -42,10 +43,13 @@ namespace Harthoorn.Dixit
                 }
             }
 
-            var longest = branches.GetFarthest();
-            longest.MarkAsError();
-            node.Append(longest);
-            return false;
+            if (branches.Count > 0)
+            {
+                var longest = branches.GetFarthestEnd();
+                longest.Mark(State.Dismissed);
+                node.Append(longest);
+            }
+            return ok;
                 
         }
 

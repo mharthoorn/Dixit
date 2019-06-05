@@ -16,7 +16,7 @@ namespace Harthoorn.Dixit
         public IGrammar Grammar; 
         public ISyntax Syntax;
         public Token Token;
-        public State State;
+        public State State { get; private set; }
         public SyntaxNode Parent;
         public List<SyntaxNode> Children;
 
@@ -79,6 +79,11 @@ namespace Harthoorn.Dixit
                         break;
                 }
             }
+        }
+
+        public void Mark(State state)
+        {
+            this.State = state;
         }
 
 

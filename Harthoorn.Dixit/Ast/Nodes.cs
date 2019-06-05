@@ -8,9 +8,16 @@ namespace Harthoorn.Dixit
     public class SyntaxError
     {
         public SyntaxNode SyntaxNode;
-        public string Expected;
-        public string LineAndLocation;
 
+        public SyntaxError(SyntaxNode node)
+        {
+            this.SyntaxNode = node;
+        }
+        
+        public IGrammar Grammar => SyntaxNode?.Grammar;
+        public string Expected => SyntaxNode?.Grammar?.Name;
+        public int Location => SyntaxNode?.Start ?? 0;
+        public string LineAndLocation => SyntaxNode?.DisplayErrorLocation();
     }
 
     public static class Nodes
@@ -25,13 +32,17 @@ namespace Harthoorn.Dixit
 
         public static SyntaxNode GetErrorNode(this SyntaxNode root)
         {
-            var descendants = root.Descendants().ToList();
             var errors = root.Descendants().Where(n => n.State == State.Error).ToList();
-            var branch = errors.GetFarthest();
+            var dismissals = root.Descendants().Where(n => n.State == State.Dismissed).ToList();
 
-            var node = branch.FindDeepest(n => n.State == State.Error && n.Grammar is Concept);
+            var error = errors.BestOf((a, b) => a.Token.Start > b.Token.Start);
+            var dismissal = dismissals.BestOf((a, b) => a.Token.Start > b.Token.Start);
+            return (error.Token.Start >= dismissal.Token.Start) ? error : dismissal;
 
-            return node;
+
+            //var node = branch.FindDeepest(n => n.State != State.Valid);
+
+            //return branch;
         }
 
         public static SyntaxError GetError(this SyntaxNode root)
@@ -39,12 +50,7 @@ namespace Harthoorn.Dixit
             var node = root.GetErrorNode();
             if (node is null) return null;
 
-            return new SyntaxError
-            {
-                SyntaxNode = node,
-                Expected = node.Grammar.Name,
-                LineAndLocation = node.DisplayErrorLocation()
-            };
+            return new SyntaxError(node);
         }
 
         private static string GetLineString(Token token)
@@ -52,8 +58,11 @@ namespace Harthoorn.Dixit
             var text = token.File.Text;
             int start = token.Start, end = token.Start, location = token.Start;
 
-            do  start--; while (start > 0 && text[start] != '\n' && text[start] != '\r');
-            do end++; while (end < text.Length && text[end] != '\n' && text[end] != '\r');
+            while (start > 0 && text[start] != '\n' && text[start] != '\r')
+            { start--; }
+
+            while (end < text.Length-1 && text[end] != '\n' && text[end] != '\r') 
+            { end++; }
 
 
             return text.Substring(start, end - start + 1).Insert(location - start, "|").Trim('\n', '\r');
@@ -79,41 +88,70 @@ namespace Harthoorn.Dixit
             }
         }
 
-        public static SyntaxNode GetFarthest(this IEnumerable<SyntaxNode> nodes)
+        public static SyntaxNode GetFarthestEnd(this IEnumerable<SyntaxNode> nodes)
         {
-            SyntaxNode longest = null; int max = 0;
+            SyntaxNode farthest = null; int max = 0;
             foreach(var node in nodes)
             {
                 var end = node?.End ?? 0;
-                if (end > max)
+                if (end > max || farthest is null)
                 {
-                    longest = node;
+                    farthest = node;
                     max = end;
                 }
             }
-            return longest;
+            return farthest;
+        }
+
+        public static T BestOf<T>(this IEnumerable<T> items, Func<T, T, bool> test)
+        {
+            T best = default;
+            bool first = true;
+            foreach(T item in items)
+            {
+                if (first)
+                {
+                    best = item;
+                }
+                else
+                {
+                    if (test(item, best)) best = item;
+                }
+            }
+            return best;
+        }
+
+        public static SyntaxNode GetFarthestStart(this IEnumerable<SyntaxNode> nodes)
+        {
+            SyntaxNode farthest = null; int max = 0;
+            foreach (var node in nodes)
+            {
+                var start = node?.Start ?? 0;
+                if (start > max)
+                {
+                    farthest = node;
+                    max = start;
+                }
+            }
+            return farthest;
         }
 
         public static SyntaxNode GetFarthest(params SyntaxNode[] nodes)
         {
-            return GetFarthest((IEnumerable<SyntaxNode>)nodes);
+            return GetFarthestEnd((IEnumerable<SyntaxNode>)nodes);
         }
 
         public static SyntaxNode GetFarthestChild(this SyntaxNode node)
         {
             var nodes = node.Children;
-            return GetFarthest(nodes);
+            return GetFarthestEnd(nodes);
         }
 
-        public static void MarkAsError(this SyntaxNode node)
-        {
-            if (node is object) node.State = State.Error;
-        }
-
+       
         public static SyntaxNode GetChild(this SyntaxNode node, Predicate<SyntaxNode> predicate)
         {
             var nodes = node.Children.Where(c => predicate(c));
-            return GetFarthest(nodes);
+            return GetFarthestEnd(nodes);
         }
 
         public static void Visit(this SyntaxNode node, Action<SyntaxNode> action)

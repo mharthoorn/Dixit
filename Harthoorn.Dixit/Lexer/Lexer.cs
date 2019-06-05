@@ -66,11 +66,28 @@ namespace Harthoorn.Dixit
             return i;
         }
 
+        public static bool EqualChar(char a, char b, bool ignorecase = false)
+        {
+            if (ignorecase)
+                return char.ToLower(a) == char.ToLower(b);
+            else
+                return a == b;
+        }
+
         public bool Advance(string literal, bool ignoreCase = false)
         {
-            int match = string.Compare(Text, head, literal, 0, literal.Length, ignoreCase);
-            Advance(literal.Length);
-            return match == 0;
+            
+            int len = literal.Length;
+            bool ok = true;
+            for (int i = 0; i < len && ok; i++)
+            {
+                ok = EqualChar(literal[i], Current, ignoreCase) && Advance();
+            }
+            return ok;
+
+            //int match = string.Compare(Text, head, literal, 0, literal.Length, ignoreCase);
+            //Advance(literal.Length);
+            //return match == 0;
         }
 
         public int Consumable => head - cursor;

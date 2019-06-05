@@ -14,9 +14,12 @@
         {
             var file = new MemoryFile(text);
             var lexer = new Lexer(file);
-            bool success = grammar.Parse(ref lexer, out ast);
-            ast.Prune();
-            return success;
+            if (grammar.Parse(ref lexer, out ast))
+            {
+                ast.Prune();
+                return true;
+            }
+            else return false;
         }
     }
 }
