@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Harthoorn.Dixit
+﻿namespace Harthoorn.Dixit
 {
-    
+
 }

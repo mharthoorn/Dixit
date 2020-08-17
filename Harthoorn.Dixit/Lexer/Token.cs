@@ -1,5 +1,3 @@
-using System;
-
 namespace Harthoorn.Dixit
 {
     public struct Token

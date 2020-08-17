@@ -90,9 +90,14 @@ namespace Harthoorn.Dixit
             return nodes.SelectMany(n => n.Children.Where(c => c.Grammar.Name == grammar.Name));
         }
 
-        public static IEnumerable<string> Values(this IEnumerable<SyntaxNode> node)
+        public static IEnumerable<string> Values(this IEnumerable<SyntaxNode> nodes)
         {
-            return node.Select(n => n.Token.Text);
+            return nodes.Select(n => n.Token.Text);
+        }
+
+        public static string Value(this IEnumerable<SyntaxNode> nodes)
+        {
+            return nodes.FirstOrDefault()?.Token.Text;
         }
 
         public static bool HasParent(this SyntaxNode node, IGrammar grammar)
