@@ -37,7 +37,9 @@ namespace Harthoorn.Dixit
 
             var error = errors.BestOf((a, b) => a.Token.Start > b.Token.Start);
             var dismissal = dismissals.BestOf((a, b) => a.Token.Start > b.Token.Start);
-            return (error.Token.Start >= dismissal.Token.Start) ? error : dismissal;
+            var errorPt = error?.Token.Start ?? -1;
+            var dismissPt = dismissal?.Token.Start ?? -1;
+            return (errorPt >= dismissPt) ? error : dismissal;
 
 
             //var node = branch.FindDeepest(n => n.State != State.Valid);
