@@ -21,7 +21,7 @@ namespace Harthoorn.Dixit
 
         public Token Parse(ref Lexer lexer)
         {
-            int i = lexer.Advance(characters.Contains);
+            int i = lexer.AdvanceWhile(characters.Contains);
             return lexer.Capture(i >= minlength);
         }
 

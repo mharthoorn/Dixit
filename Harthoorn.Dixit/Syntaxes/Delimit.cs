@@ -24,7 +24,7 @@ namespace Harthoorn.Dixit
             {
                 if (!esc && lexer.Current == End) break;
                 esc = (lexer.Current == Escape);
-                ok = lexer.Advance();
+                ok = lexer.AdvanceWhile();
             } 
             while (ok);
             ok = lexer.Advance(End);

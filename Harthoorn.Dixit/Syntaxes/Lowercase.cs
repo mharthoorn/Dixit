@@ -5,7 +5,7 @@ namespace Harthoorn.Dixit
 
         public Token Parse(ref Lexer lexer)
         {
-            lexer.Advance(c => c >= 'a' && c <= 'z');
+            lexer.AdvanceWhile(c => c >= 'a' && c <= 'z');
             return lexer.Capture(lexer.Consumable > 0);
 
         }

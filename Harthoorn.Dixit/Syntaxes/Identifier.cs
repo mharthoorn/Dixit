@@ -19,10 +19,10 @@ namespace Harthoorn.Dixit
 
             if (valid)
             {
-                lexer.Advance();
+                lexer.AdvanceWhile();
                 while (alpha.Contains(lexer.Current) || numeric.Contains(lexer.Current) || lexer.Current == underscore)
                 {
-                    lexer.Advance();
+                    lexer.AdvanceWhile();
                 }
             }
             return lexer.Capture(valid);

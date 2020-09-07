@@ -36,11 +36,11 @@ namespace Harthoorn.Dixit
         public bool Advance(char character)
         {
             bool ok = (Current == character);
-            if (ok) Advance();
+            if (ok) AdvanceWhile();
             return ok;
         }
 
-        public bool Advance(int count = 1)
+        public bool AdvanceWhile(int count = 1)
         {
             if (Text.Length >= head + count)
             {
@@ -53,14 +53,27 @@ namespace Harthoorn.Dixit
             }
         }
 
-        public int Advance(Predicate<char> predicate)
+        public bool AdvanceWhile(Predicate<char> predicate, int count)
+        {
+            int i = 0;
+
+            while (predicate(Current) && i < count)
+            {
+                i++;
+                bool advance = AdvanceWhile();
+                if (!advance) break;
+            }
+            return i == count;
+        }
+
+        public int AdvanceWhile(Predicate<char> predicate)
         {
             int i = 0;
             
             while (predicate(Current))
             {
                 i++;
-                var advance = Advance();
+                var advance = AdvanceWhile();
                 if (!advance) break; 
             }
             return i;
@@ -81,7 +94,7 @@ namespace Harthoorn.Dixit
             bool ok = true;
             for (int i = 0; i < len && ok; i++)
             {
-                ok = EqualChar(literal[i], Current, ignoreCase) && Advance();
+                ok = EqualChar(literal[i], Current, ignoreCase) && AdvanceWhile();
             }
             return ok;
 
@@ -141,7 +154,7 @@ namespace Harthoorn.Dixit
 
         public static Token Consume(this Lexer lexer, int n, bool valid)
         {
-            var ok = lexer.Advance(n);
+            var ok = lexer.AdvanceWhile(n);
             return lexer.Capture(ok);
         }
     }
