@@ -20,6 +20,11 @@ namespace Harthoorn.Dixit
             return node.Children?.First();
         }
 
+        public static SyntaxNode FirstChild(this SyntaxNode node, IGrammar grammar)
+        {
+            return node.Children?.Where(c => c.Grammar == grammar).First();
+        }
+
         public static IEnumerable<SyntaxNode> DeepSelect(this SyntaxNode node, IGrammar grammar)
         {
             return node.DeepSelect(n => n.Grammar.Name == grammar.Name);

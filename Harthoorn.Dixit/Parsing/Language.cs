@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+
 namespace Harthoorn.Dixit
 {
     //public class Language : IGrammar
@@ -17,5 +20,28 @@ namespace Harthoorn.Dixit
     //    }
     //}
 
+    public class LanguageChecker
+    {
+        List<IGrammar> CheckList = new List<IGrammar>();
+
+        public void Test(IGrammar grammar)
+        {
+            if (CheckList.Contains(grammar)) return;
+            
+            CheckList.Add(grammar);
+
+            if (grammar is Concept c && c.Grammar is null)
+            {
+                Console.WriteLine($"Concept '{c.Name}' is not defined.");
+            }
+            else 
+            {
+                foreach(var n in grammar.GetChildren())
+                {
+                    Test(n);
+                }
+            }
+        }
+    }
 
 }

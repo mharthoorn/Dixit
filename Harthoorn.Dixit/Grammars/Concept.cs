@@ -1,4 +1,6 @@
-﻿namespace Harthoorn.Dixit
+﻿using System.Collections.Generic;
+
+namespace Harthoorn.Dixit
 {
 
     public class Concept : IGrammar
@@ -25,6 +27,11 @@
         public override string ToString()
         {
             return $"{Name} (Concept)";
+        }
+
+        public IEnumerable<IGrammar> GetChildren()
+        {
+            yield return Grammar;
         }
     }
 }

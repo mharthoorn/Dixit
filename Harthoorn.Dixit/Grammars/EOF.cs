@@ -1,4 +1,6 @@
-﻿namespace Harthoorn.Dixit
+﻿using System.Collections.Generic;
+
+namespace Harthoorn.Dixit
 {
     public class EndOfString : ISyntax
     {
@@ -34,6 +36,11 @@
         public override string ToString()
         {
             return Name;
+        }
+
+        public IEnumerable<IGrammar> GetChildren()
+        {
+            yield break;
         }
     }
 }

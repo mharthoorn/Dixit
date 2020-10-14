@@ -75,6 +75,13 @@ namespace Harthoorn.Dixit
             return concept;
         }
 
+        public static Concept Repetition(this Concept concept, IGrammar grammar, int mincount = 0)
+        {
+            var repetition = new Repetition(concept.Name + " (repetition)", grammar, concept.Whitespace, mincount);
+            concept.Grammar = repetition;
+            return concept;
+        }
+
         public static IGrammar Literal(string name, string literal)
         {
             var syntax = new Literal(literal);

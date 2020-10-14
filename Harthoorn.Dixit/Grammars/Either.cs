@@ -6,14 +6,14 @@ namespace Harthoorn.Dixit
     public class Either : IGrammar
     {
         public string Name { get; }
-        List<IGrammar> Children { get; set; }
+        List<IGrammar> children;
         ISyntax whitespace;
 
         public Either(string name, ISyntax whitespace, IEnumerable<IGrammar> grammars)
         {
             this.Name = name;
             this.whitespace = whitespace;
-            Children = grammars.ToList();
+            children = grammars.ToList();
         }
          
         
@@ -26,7 +26,7 @@ namespace Harthoorn.Dixit
             var bookmark = lexer;
             bool ok = false;
 
-            foreach (var grammar in Children)
+            foreach (var grammar in children)
             {
                 lexer = bookmark;
 
@@ -46,9 +46,18 @@ namespace Harthoorn.Dixit
             if (branches.Count > 0)
             {
                 var longest = branches.GetFarthestEnd();
-                longest.Mark(State.Dismissed);
+                if (ok)
+                {
+                    longest.Mark(State.Dismissed);
+                }
+                else
+                {
+                    longest.Mark(State.Error);
+                }
+                
                 node.Append(longest);
             }
+
             return ok;
                 
         }
@@ -58,7 +67,10 @@ namespace Harthoorn.Dixit
             return $"{Name} ({nameof(Either)})";
         }
 
-       
+        public IEnumerable<IGrammar> GetChildren()
+        {
+            return this.children;
+        }
     }
 
 }

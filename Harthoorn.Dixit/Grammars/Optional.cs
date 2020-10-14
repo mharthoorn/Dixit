@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Harthoorn.Dixit
 {
 
@@ -27,6 +29,11 @@ namespace Harthoorn.Dixit
         public override string ToString()
         {
             return Name;
+        }
+
+        public IEnumerable<IGrammar> GetChildren()
+        {
+            yield return grammar;
         }
     }
 

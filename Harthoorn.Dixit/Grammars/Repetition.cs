@@ -1,58 +1,41 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Harthoorn.Dixit
 {
-    public class Interlace : IGrammar
+    public class Repetition : IGrammar
     {
         public string Name { get; }
-        public IGrammar Item { get; }
+        
         ISyntax whitespace;
-        IGrammar glue;
         int mincount;
+        IGrammar item;
 
-        public Interlace(string name, IGrammar glue, IGrammar item, ISyntax whitespace, int mincount)
+        public Repetition(string name, IGrammar item, ISyntax whitespace, int mincount)
         {
             this.Name = name;
             this.whitespace = whitespace;
-            this.Item = item;
-            this.glue = glue;
             this.mincount = mincount;
+            this.item = item;
         }
 
         public bool Parse(ref Lexer lexer, out SyntaxNode node)
         {
             whitespace.Parse(ref lexer);
             int count = 0;
-
-            node = new SyntaxNode(this, lexer.Here);
             
-            while (true)
+            node = new SyntaxNode(this, lexer.Here);
+
+            while(true)
             {
                 count++;
-
-                if (count > 1)
-                {
-                    whitespace.Parse(ref lexer);
-                    
-                    if (glue.Parse(ref lexer, out SyntaxNode nglue))
-                    {
-                        node.Append(nglue);
-                    }
-                    else 
-                    {
-                        return true;
-                    }
-                }
-
-                whitespace.Parse(ref lexer);
-                bool parsed = Item.Parse(ref lexer, out SyntaxNode n);
+                bool parsed = item.Parse(ref lexer, out SyntaxNode n);
                 if (parsed)
                 {
                     node.Append(n, errorproliferation: State.Valid);
-
                 }
                 else if (count > mincount)
                 {
+                    n.Mark(State.Dismissed);
                     node.Append(n, errorproliferation: State.Valid);
                     return true;
                 }
@@ -62,18 +45,13 @@ namespace Harthoorn.Dixit
                     node.Append(n, errorproliferation: State.Error);
                     return false;
                 }
-                
             }
-        }
 
-        public override string ToString()
-        {
-            return $"{Name} ({nameof(Interlace)})";
         }
 
         public IEnumerable<IGrammar> GetChildren()
         {
-            yield return Item;
+            yield return item;
         }
     }
 }

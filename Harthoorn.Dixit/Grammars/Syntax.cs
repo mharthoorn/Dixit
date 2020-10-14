@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Harthoorn.Dixit
 {
     public class Syntax : IGrammar
@@ -21,6 +23,11 @@ namespace Harthoorn.Dixit
         public override string ToString()
         {
             return $"{Name} ({syntax.GetType().Name})";
+        }
+
+        public IEnumerable<IGrammar> GetChildren()
+        {
+            yield break; // no child grammars
         }
     }
 }

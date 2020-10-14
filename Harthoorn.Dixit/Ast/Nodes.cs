@@ -4,6 +4,7 @@ using System.Linq;
 
 namespace Harthoorn.Dixit
 {
+  
 
     public class SyntaxError
     {
