@@ -90,7 +90,7 @@ namespace Harthoorn.Dixit
             return node.Children.Where(n => n.Grammar.Name == grammar.Name);
         }
 
-        public static IEnumerable<SyntaxNode> ChildrenWhere(this IEnumerable<SyntaxNode> nodes, IGrammar grammar)
+        public static IEnumerable<SyntaxNode> ChildrenThatAre(this IEnumerable<SyntaxNode> nodes, IGrammar grammar)
         {
             return nodes.SelectMany(n => n.Children.Where(c => c.Grammar.Name == grammar.Name));
         }

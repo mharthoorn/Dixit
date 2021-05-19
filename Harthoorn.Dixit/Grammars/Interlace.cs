@@ -7,7 +7,7 @@ namespace Harthoorn.Dixit
         public string Name { get; }
         public IGrammar Item { get; }
         ISyntax whitespace;
-        IGrammar glue;
+        public IGrammar Glue;
         int mincount;
 
         public Interlace(string name, IGrammar glue, IGrammar item, ISyntax whitespace, int mincount)
@@ -15,7 +15,7 @@ namespace Harthoorn.Dixit
             this.Name = name;
             this.whitespace = whitespace;
             this.Item = item;
-            this.glue = glue;
+            this.Glue = glue;
             this.mincount = mincount;
         }
 
@@ -34,7 +34,7 @@ namespace Harthoorn.Dixit
                 {
                     whitespace.Parse(ref lexer);
                     
-                    if (glue.Parse(ref lexer, out SyntaxNode nglue))
+                    if (Glue.Parse(ref lexer, out SyntaxNode nglue))
                     {
                         node.Append(nglue);
                     }
