@@ -56,24 +56,40 @@ namespace Harthoorn.Dixit
             return new SyntaxError(node);
         }
 
-        private static string GetLineString(Token token)
+        
+        public static int ScanLeft(string text, int start, Func<char, bool> predicate)
+        {
+            int i = Math.Min(start, text.Length - 1);
+            while (i > 0 && !predicate(text[i])) i--;
+            return i;
+        }
+        
+        public static int ScanRight(string text, int start, Func<char, bool> predicate)
+        {
+            int i = Math.Max(start, 0);
+            while (i <= text.Length-1 && !predicate(text[i])) i++;
+            return i;
+        }
+
+        private static int GetLineStart(Token token) => ScanLeft(token.File.Text, token.Start, c => c is '\n' or '\r');
+
+        private static int GetLineEnd(Token token) => ScanRight(token.File.Text, token.Start, c => c is '\n' or '\r');
+        
+
+        public static string GetTokenErrorLine(Token token)
         {
             var text = token.File.Text;
-            int start = token.Start, end = token.Start, location = token.Start;
+            int location = token.Start;
 
-            while (start > 0 && text[start] != '\n' && text[start] != '\r')
-            { start--; }
-
-            while (end < text.Length-1 && text[end] != '\n' && text[end] != '\r') 
-            { end++; }
-
-
-            return text.Substring(start, end - start + 1).Insert(location - start, "|").Trim('\n', '\r');
+            int start = GetLineStart(token);
+            int end = GetLineEnd(token);
+        
+            return text.Substring(start, end - start).Insert(location - start, "|").Trim('\n', '\r');
         }
 
         public static string DisplayErrorLocation(this SyntaxNode error)
         {
-            return GetLineString(error.Token);
+            return GetTokenErrorLine(error.Token);
         }
 
         public static IEnumerable<SyntaxNode> Descendants(this SyntaxNode node)

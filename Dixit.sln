@@ -1,8 +1,10 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2010
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31313.79
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Harthoorn.Dixit", "Harthoorn.Dixit\Harthoorn.Dixit.csproj", "{88C0B68F-1AA2-4C40-BD52-53C48EA6278F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dixit.Testing", "Dixit.Testing\Dixit.Testing.csproj", "{56D286C0-34AB-4B6A-9839-CBF0B25A0371}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -14,6 +16,10 @@ Global
 		{88C0B68F-1AA2-4C40-BD52-53C48EA6278F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{88C0B68F-1AA2-4C40-BD52-53C48EA6278F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{88C0B68F-1AA2-4C40-BD52-53C48EA6278F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{56D286C0-34AB-4B6A-9839-CBF0B25A0371}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{56D286C0-34AB-4B6A-9839-CBF0B25A0371}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{56D286C0-34AB-4B6A-9839-CBF0B25A0371}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{56D286C0-34AB-4B6A-9839-CBF0B25A0371}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
