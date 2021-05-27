@@ -20,8 +20,6 @@ namespace Dixit.Testing
             line = Nodes.GetTokenErrorLine(t);
             Assert.AreEqual("abc def ghi|", line);
 
-
-
         }
     }
 }

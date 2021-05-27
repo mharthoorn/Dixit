@@ -25,6 +25,7 @@ namespace Harthoorn.Dixit
             return node.Children?.Where(c => c.Grammar == grammar).First();
         }
 
+
         public static IEnumerable<SyntaxNode> DeepSelect(this SyntaxNode node, IGrammar grammar)
         {
             return node.DeepSelect(n => n.Grammar.Name == grammar.Name);
@@ -55,6 +56,21 @@ namespace Harthoorn.Dixit
             return nodes.SelectMany(n => n.DeepSelect(grammars));
         }
 
+
+        public static IEnumerable<SyntaxNode> Select<T>(this SyntaxNode node)
+        {
+            foreach (var n in node.Children)
+            {
+                if (n.Grammar is T) yield return n;
+            }
+        }
+
+        public static IEnumerable<SyntaxNode> Select<T>(this IEnumerable<SyntaxNode> nodes)
+        {
+            return nodes.SelectMany(Select<T>);
+        }
+
+
         public static IEnumerable<SyntaxNode> PathSelect(this SyntaxNode node, IEnumerable<IGrammar> grammars)
         {
             var grammar = grammars.FirstOrDefault();
@@ -84,6 +100,8 @@ namespace Harthoorn.Dixit
         {
             return nodes.PathSelect((IEnumerable<IGrammar>)grammars);
         }
+
+
 
         public static IEnumerable<SyntaxNode> ChildrenWhere(this SyntaxNode node, IGrammar grammar)
         {
