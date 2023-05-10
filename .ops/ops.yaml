@@ -1,0 +1,5 @@
+pack: dotnet pack Harthoorn.Dixit/Harthoorn.Dixit.csproj -c Release
+
+latest: latest-file 'Harthoorn.Dixit\bin\Release\Dixit.*.nupkg'
+
+    
