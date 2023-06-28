@@ -11,9 +11,27 @@ namespace Harthoorn.Dixit
             {
                 case IGrammar g: return g;
                 case ISyntax syntax: return new Syntax(syntax.GetType().Name, syntax);
-                case string s: return new Syntax(s, new Literal(s));
+                case string s: return new Syntax(s, KeywordOrLiteral(s));
                 default: return null;
             }
+        }
+
+        public static ISyntax KeywordOrLiteral(string s)
+        {
+            if (IsWord(s))
+                return new Keyword(s);
+            else 
+                return new Literal(s);
+        }
+
+        static bool IsWord(string s)
+        {
+            for(int i = 0; i < s.Length; i++)
+            {
+                bool letter = char.IsLetter(s[i]);
+                if (!letter) return false;
+            }
+            return true;
         }
 
         public static IEnumerable<IGrammar> Grammarize(this object[] words)

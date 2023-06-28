@@ -57,4 +57,15 @@ public class VariousTests
         Assert.IsTrue(token.IsValid);
 
     }
+
+    [TestMethod]
+    public void WordOrLiteral()
+    {
+        Assert.IsInstanceOfType(Grammars.KeywordOrLiteral("+"), typeof(Literal));
+        Assert.IsInstanceOfType(Grammars.KeywordOrLiteral("abc+"), typeof(Literal));
+        Assert.IsInstanceOfType(Grammars.KeywordOrLiteral("class"), typeof(Keyword));
+        Assert.IsInstanceOfType(Grammars.KeywordOrLiteral("Function"), typeof(Keyword));
+        Assert.IsInstanceOfType(Grammars.KeywordOrLiteral("class_"), typeof(Literal));
+
+    }
 }

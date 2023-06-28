@@ -8,7 +8,7 @@
 	<PropertyGroup>
 		<PackageId>Dixit</PackageId>
 		<Authors>M. Harthoorn</Authors>
-		<Version>0.7.4</Version>
+		<Version>0.7.5</Version>
 		<Title>Dixit - Compiler Construction Engine</Title>
 		<Description>Compiler Construction Engine</Description>
 		<Copyright>Copyright 2020</Copyright>
