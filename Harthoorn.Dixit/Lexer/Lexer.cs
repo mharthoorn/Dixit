@@ -1,5 +1,6 @@
 
 using System;
+using System.Text.RegularExpressions;
 
 namespace Harthoorn.Dixit
 {
@@ -85,6 +86,21 @@ namespace Harthoorn.Dixit
                 return char.ToLower(a) == char.ToLower(b);
             else
                 return a == b;
+        }
+
+        public bool Advance(string pattern)
+        {
+            Regex regex = new("^" + pattern);
+            return Advance(regex);
+        }
+        public bool Advance(Regex regex)
+        {
+            var match = regex.Match(Text, head);
+
+            if (match.Success)
+                this.head += match.Length; 
+            
+            return match.Success;
         }
 
         public bool Advance(string literal, bool ignoreCase = false)
